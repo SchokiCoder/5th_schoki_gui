@@ -23,22 +23,32 @@
 #include <stdint.h>
 #include "sprite.h"
 
+typedef struct SGUI_Theme SGUI_Theme;
+typedef struct SGUI_Menu SGUI_Menu;
+
 #define SGUI_ENTRY_MAX_TEXT_LEN 64
 
 typedef struct SGUI_Entry
 {
+	SGUI_Menu *menu;
+
 	bool visible;
 	bool active;
 	char text[SGUI_ENTRY_MAX_TEXT_LEN];
 	SGUI_Sprite sprite;
+
 	int32_t x;
 	int32_t y;
 	int32_t w;
 	int32_t h;
 
 	SDL_Color font_color;
+	SDL_Color bg_color;
+	SDL_Color border_color;
 } SGUI_Entry ;
 
-SGUI_Entry SGUI_Entry_new( void );
+void SGUI_Entry_new( SGUI_Entry*, SGUI_Menu*, const SGUI_Theme* );
+
+void SGUI_Entry_draw( SGUI_Entry* );
 
 #endif /* SGUI_ENTRY_H */

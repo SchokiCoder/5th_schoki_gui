@@ -17,7 +17,7 @@
 CC = cc
 API_SHORT = SGUI
 BIN_NAME = lib$(API_SHORT).so
-CFLAGS = -std=c99 -Wall -Wextra -pedantic -O3 -shared -fPIC
+CFLAGS = -std=c99 -Wall -Wextra -O3 -shared -fPIC
 INCLUDE = -I /usr/include/SDL2
 LIBS = -l SDL2 -l SDL2_image -l SDL2_ttf
 

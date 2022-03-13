@@ -31,12 +31,12 @@ typedef struct SGUI_Sprite
 	SDL_Texture *texture;
 } SGUI_Sprite ;
 
-SGUI_Sprite SGUI_sprite_from_file( SDL_Renderer*, const char* );
+SGUI_Sprite SGUI_Sprite_from_file( SDL_Renderer*, const char* );
 
-SGUI_Sprite SGUI_sprite_from_text( SDL_Renderer*, const char*, TTF_Font*, SDL_Color);
+SGUI_Sprite SGUI_Sprite_from_text( SDL_Renderer*, const char*, TTF_Font*, SDL_Color);
 
-void SGUI_sprite_create_texture( SGUI_Sprite*, SDL_Renderer* );
+void SGUI_Sprite_create_texture( SGUI_Sprite*, SDL_Renderer* );
 
-void SGUI_clear_sprite( SGUI_Sprite* );
+void SGUI_Sprite_clear( SGUI_Sprite* );
 
 #endif /* SGUI_SPRITE_H */

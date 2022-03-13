@@ -19,13 +19,16 @@
 #ifndef SGUI_MENU_H
 #define SGUI_MENU_H
 
-#include "label.h"
-#include "button.h"
-#include "entry.h"
 #include <stdbool.h>
 #include <stdint.h>
 #include <SDL_render.h>
 #include <SDL_ttf.h>
+#include <SDL_pixels.h>
+
+typedef struct SGUI_Theme SGUI_Theme;
+typedef struct SGUI_Label SGUI_Label;
+typedef struct SGUI_Button SGUI_Button;
+typedef struct SGUI_Entry SGUI_Entry;
 
 #define SGUI_MENU_MAX_WIDGETS 16 /* per type */
 
@@ -46,12 +49,21 @@ typedef struct SGUI_Menu
 	uint8_t focused_entry;
 	uint8_t entry_count;
 	SGUI_Entry *entries[SGUI_MENU_MAX_WIDGETS];
+
+	int32_t x;
+	int32_t y;
+	int32_t w;
+	int32_t h;
+
+	SDL_Color bg_color;
 } SGUI_Menu ;
 
-SGUI_Menu SGUI_Menu_new( SDL_Renderer*, TTF_Font* );
+SGUI_Menu SGUI_Menu_new( SDL_Renderer*, TTF_Font*, const SGUI_Theme* );
 
 void SGUI_Menu_draw( SGUI_Menu* );
 
 void SGUI_Menu_handle_events( SGUI_Menu*, SDL_Event* );
+
+void SGUI_Menu_clear( SGUI_Menu* );
 
 #endif /* SGUI_MENU_H */

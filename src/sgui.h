@@ -21,8 +21,8 @@
 
 #include <stdint.h>
 
-#define API_MAJOR 0
-#define API_MINOR 2
-#define API_PATCH 0
+#define SGUI_API_MAJOR 0
+#define SGUI_API_MINOR 3
+#define SGUI_API_PATCH 0
 
 #endif /* SGUI_SGUI_H */

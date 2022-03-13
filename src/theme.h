@@ -16,41 +16,26 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef SGUI_BUTTON_H
-#define SGUI_BUTTON_H
+#ifndef SGUI_THEME_H
+#define SGUI_THEME_H
 
-#include <stdint.h>
-#include "sprite.h"
+#include <SDL_pixels.h>
 
-typedef struct SGUI_Theme SGUI_Theme;
-typedef struct SGUI_Menu SGUI_Menu;
-
-#define SGUI_BUTTON_MAX_TEXT_LEN 32
-
-typedef struct SGUI_Button
+typedef struct SGUI_Theme
 {
-	SGUI_Menu *menu;
+    SDL_Color menu_bg_color;
 
-	bool visible;
-	bool active;
-	char text[SGUI_BUTTON_MAX_TEXT_LEN];
-	SGUI_Sprite sprite;
+    SDL_Color label_font_color;
+    SDL_Color label_bg_color;
+    SDL_Color label_border_color;
 
-	int32_t x;
-	int32_t y;
-	int32_t w;
-	int32_t h;
+    SDL_Color button_font_color;
+    SDL_Color button_bg_color;
+    SDL_Color button_border_color;
 
-	SDL_Color font_color;
-	SDL_Color bg_color;
-	SDL_Color border_color;
+    SDL_Color entry_font_color;
+    SDL_Color entry_bg_color;
+    SDL_Color entry_border_color;
+} SGUI_Theme ;
 
-	void (*func_click) (void*);
-	void *data_click;
-} SGUI_Button ;
-
-void SGUI_Button_new( SGUI_Button*, SGUI_Menu*, const SGUI_Theme* );
-
-void SGUI_Button_draw( SGUI_Button* );
-
-#endif /* SGUI_BUTTON_H */
+#endif /* SGUI_THEME_H */

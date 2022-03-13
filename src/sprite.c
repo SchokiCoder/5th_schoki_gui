@@ -20,7 +20,7 @@
 #include <SDL_ttf.h>
 #include "sprite.h"
 
-void SGUI_sprite_create_texture( SGUI_Sprite *sprite, SDL_Renderer *renderer )
+void SGUI_Sprite_create_texture( SGUI_Sprite *sprite, SDL_Renderer *renderer )
 {
 	// create texture
 	sprite->texture = SDL_CreateTextureFromSurface(renderer, sprite->surface);
@@ -32,29 +32,29 @@ void SGUI_sprite_create_texture( SGUI_Sprite *sprite, SDL_Renderer *renderer )
 	}
 }
 
-SGUI_Sprite SGUI_sprite_from_file( SDL_Renderer *renderer, const char *filepath )
+SGUI_Sprite SGUI_Sprite_from_file( SDL_Renderer *renderer, const char *filepath )
 {
 	SGUI_Sprite result = {.invalid = false};
 
 	// load image, create texture
 	result.surface = IMG_Load(filepath);
-	SGUI_sprite_create_texture(&result, renderer);
+	SGUI_Sprite_create_texture(&result, renderer);
 
 	return result;
 }
 
-SGUI_Sprite SGUI_sprite_from_text( SDL_Renderer *renderer, const char *text, TTF_Font *font, SDL_Color color )
+SGUI_Sprite SGUI_Sprite_from_text( SDL_Renderer *renderer, const char *text, TTF_Font *font, SDL_Color color )
 {
 	SGUI_Sprite result = {.invalid = false};
 
 	// create text, create texture
 	result.surface = TTF_RenderText_Solid(font, text, color);
-	SGUI_sprite_create_texture(&result, renderer);
+	SGUI_Sprite_create_texture(&result, renderer);
 
 	return result;
 }
 
-void SGUI_clear_sprite( SGUI_Sprite *sprite )
+void SGUI_Sprite_clear( SGUI_Sprite *sprite )
 {
 	//reset values
 	sprite->invalid = false;

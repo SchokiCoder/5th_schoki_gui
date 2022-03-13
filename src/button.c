@@ -16,15 +16,57 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include "theme.h"
+#include "menu.h"
 #include "button.h"
 
-SGUI_Button SGUI_Button_new( void )
+void SGUI_Button_new( SGUI_Button *button, SGUI_Menu *menu, const SGUI_Theme *theme )
 {
-	SGUI_Button result = {
-		.sprite = {.invalid = false},
-		.func_click = NULL,
-		.data_click = NULL
+	button->menu = menu;
+	button->sprite.invalid = false;
+	button->visible = true;
+	button->active = true;
+	button->font_color = theme->button_font_color;
+	button->bg_color = theme->button_bg_color;
+	button->border_color = theme->button_border_color;
+	button->func_click = NULL;
+	button->data_click = NULL;
+
+	menu->buttons[menu->button_count] = button;
+	menu->button_count++;
+}
+
+void SGUI_Button_draw( SGUI_Button *button )
+{
+	SDL_Rect draw_target = {
+		.x = button->x,
+		.y = button->y,
+		.w = button->w,
+		.h = button->h
 	};
 
-	return result;
+	// draw bg
+	SDL_SetRenderDrawColor(
+		button->menu->renderer,
+		button->bg_color.r,
+		button->bg_color.g,
+		button->bg_color.b,
+		button->bg_color.a);
+	SDL_RenderFillRect(button->menu->renderer, &draw_target);
+
+	// draw border
+	SDL_SetRenderDrawColor(
+		button->menu->renderer,
+		button->border_color.r,
+		button->border_color.g,
+		button->border_color.b,
+		button->border_color.a);
+	SDL_RenderDrawRect(button->menu->renderer, &draw_target);
+
+	// draw text
+	SDL_RenderCopy(
+		button->menu->renderer,
+		button->sprite.texture,
+		NULL,
+		&draw_target);
 }

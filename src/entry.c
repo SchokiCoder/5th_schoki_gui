@@ -16,15 +16,56 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include "theme.h"
+#include "menu.h"
 #include "entry.h"
 
-SGUI_Entry SGUI_Entry_new( void )
+void SGUI_Entry_new( SGUI_Entry *entry, SGUI_Menu *menu, const SGUI_Theme *theme )
 {
-	SGUI_Entry result = {
-		.text = "",
-		.sprite = {.invalid = false},
-		.font_color = {.r = 0, .g = 0, .b = 0, .a = 255}
+	entry->menu = menu;
+	entry->text[0] = '\0';
+	entry->visible = true;
+	entry->active = true;
+	entry->sprite.invalid = false;
+	entry->font_color = theme->entry_font_color;
+	entry->bg_color = theme->entry_bg_color;
+	entry->border_color = theme->entry_border_color;
+
+	menu->entries[menu->entry_count] = entry;
+	menu->entry_count++;
+}
+
+void SGUI_Entry_draw( SGUI_Entry *entry )
+{
+	SDL_Rect draw_target = {
+		.x = entry->x,
+		.y = entry->y,
+		.w = entry->w,
+		.h = entry->h
 	};
 
-	return result;
+	// draw bg
+	SDL_SetRenderDrawColor(
+		entry->menu->renderer,
+		entry->bg_color.r,
+		entry->bg_color.g,
+		entry->bg_color.b,
+		entry->bg_color.a);
+	SDL_RenderFillRect(entry->menu->renderer, &draw_target);
+
+	// draw border
+	SDL_SetRenderDrawColor(
+		entry->menu->renderer,
+		entry->border_color.r,
+		entry->border_color.g,
+		entry->border_color.b,
+		entry->border_color.a);
+	SDL_RenderDrawRect(entry->menu->renderer, &draw_target);
+
+	// draw text
+	SDL_RenderCopy(
+		entry->menu->renderer,
+		entry->sprite.texture,
+		NULL,
+		&draw_target);
 }

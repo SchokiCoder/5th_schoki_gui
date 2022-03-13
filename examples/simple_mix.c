@@ -18,6 +18,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include "def_themes.h"
 #include "menu.h"
 #include "label.h"
 #include "button.h"
@@ -26,12 +27,6 @@
 
 static const char PATH_FONT[] = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
 static const uint32_t FONT_SIZE = 12;
-static const SDL_Color FONT_COLOR = {
-	.r = 0,
-	.g = 0,
-	.b = 0,
-	.a = 255
-};
 
 static const char SPRITE_TEXT[] = "Sprite";
 static const char LABEL_TEXT[] = "Label";
@@ -39,6 +34,11 @@ static const char BUTTON_TEXT[] = "Button";
 static const char BUTTON_CLICK_TEXT[] = "yaaay";
 static const char ENTRY0_TEXT[] = "e0";
 static const char ENTRY1_TEXT[] = "e1";
+
+static const int32_t MENU_X = 0;
+static const int32_t MENU_Y = 0;
+static const int32_t MENU_W = 640;
+static const int32_t MENU_H = 480;
 
 static const int32_t SPRITE_X = 10;
 static const int32_t SPRITE_Y = 10;
@@ -100,9 +100,12 @@ int main( void )
     window = SDL_CreateWindow(
     	"test",
     	SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-    	640, 480,
+    	MENU_W, MENU_H,
     	SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, -1, 0);
+
+    //sdl enable alpha blending
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
     // load font
 	font = TTF_OpenFont(PATH_FONT, FONT_SIZE);
@@ -113,7 +116,7 @@ int main( void )
 		return 1;
 	}
 
-	sprite = SGUI_sprite_from_text(renderer, SPRITE_TEXT, font, FONT_COLOR);
+	sprite = SGUI_Sprite_from_text(renderer, SPRITE_TEXT, font, SGUI_THEME_DARK.label_font_color);
 
 	rect_sprite.x = SPRITE_X;
     rect_sprite.y = SPRITE_Y;
@@ -121,28 +124,25 @@ int main( void )
 	rect_sprite.h = sprite.surface->h;
 
 	// make menu
-	menu = SGUI_Menu_new(renderer, font);
-	label = SGUI_Label_new();
-	button = SGUI_Button_new();
-	entry0 = SGUI_Entry_new();
-	entry1 = SGUI_Entry_new();
+	menu = SGUI_Menu_new(renderer, font, &SGUI_THEME_DARK);
+	SGUI_Label_new(&label, &menu, &SGUI_THEME_DARK);
+	SGUI_Button_new(&button, &menu, &SGUI_THEME_DARK);
+	SGUI_Entry_new(&entry0, &menu, &SGUI_THEME_DARK);
+	SGUI_Entry_new(&entry1, &menu, &SGUI_THEME_DARK);
 
-	label.sprite = SGUI_sprite_from_text(renderer, LABEL_TEXT, font, FONT_COLOR);
-	button.sprite = SGUI_sprite_from_text(renderer, BUTTON_TEXT, font, FONT_COLOR);
+	label.sprite = SGUI_Sprite_from_text(renderer, LABEL_TEXT, font, SGUI_THEME_DARK.label_font_color);
+	button.sprite = SGUI_Sprite_from_text(renderer, BUTTON_TEXT, font, SGUI_THEME_DARK.button_font_color);
 
 	strcpy(entry0.text, ENTRY0_TEXT);
 	strcpy(entry1.text, ENTRY1_TEXT);
 
-	entry0.sprite = SGUI_sprite_from_text(renderer, entry0.text, font, FONT_COLOR);
-	entry1.sprite = SGUI_sprite_from_text(renderer, entry1.text, font, FONT_COLOR);
+	entry0.sprite = SGUI_Sprite_from_text(renderer, entry0.text, font, SGUI_THEME_DARK.entry_font_color);
+	entry1.sprite = SGUI_Sprite_from_text(renderer, entry1.text, font, SGUI_THEME_DARK.entry_font_color);
 
-	label.visible = true;
-	button.visible = true;
-	button.active = true;
-	entry0.visible = true;
-	entry0.active = true;
-	entry1.visible = true;
-	entry1.active = true;
+	menu.x = MENU_X;
+	menu.y = MENU_Y;
+	menu.w = MENU_W;
+	menu.h = MENU_H;
 
 	label.x = LABEL_X;
 	label.y = LABEL_Y;
@@ -167,18 +167,6 @@ int main( void )
 	menu.visible = true;
 	menu.active = true;
 
-	menu.labels[0] = &label;
-	menu.label_count++;
-
-	menu.buttons[0] = &button;
-	menu.button_count++;
-
-	menu.entries[0] = &entry0;
-	menu.entry_count++;
-
-	menu.entries[1] = &entry1;
-	menu.entry_count++;
-
 	button.func_click = button_click;
 	button.data_click = (char*) BUTTON_CLICK_TEXT;
 
@@ -201,10 +189,6 @@ int main( void )
 			}
 		}
 
-		// draw background
-    	SDL_SetRenderDrawColor(renderer, 155, 219, 245, 255);
-    	SDL_RenderClear(renderer);
-
     	// draw sprite
     	SDL_RenderCopy(
 			renderer,
@@ -226,7 +210,8 @@ int main( void )
     TTF_Quit();
 
     // clear sprites
-    SGUI_clear_sprite(&sprite);
+    SGUI_Sprite_clear(&sprite);
+    SGUI_Menu_clear(&menu);
 
 	return 0;
 }

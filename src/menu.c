@@ -17,9 +17,13 @@
 */
 
 #include <SDL_events.h>
+#include "theme.h"
+#include "label.h"
+#include "button.h"
+#include "entry.h"
 #include "menu.h"
 
-SGUI_Menu SGUI_Menu_new( SDL_Renderer *renderer, TTF_Font *font )
+SGUI_Menu SGUI_Menu_new( SDL_Renderer *renderer, TTF_Font *font, const SGUI_Theme *theme )
 {
     SGUI_Menu result = {
 		.renderer = renderer,
@@ -27,7 +31,10 @@ SGUI_Menu SGUI_Menu_new( SDL_Renderer *renderer, TTF_Font *font )
         .label_count = 0,
         .button_count = 0,
         .entry_count = 0,
-        .focused_entry = 0
+        .focused_entry = 0,
+        .visible = true,
+        .active = true,
+        .bg_color = theme->menu_bg_color
     };
 
     return result;
@@ -35,27 +42,32 @@ SGUI_Menu SGUI_Menu_new( SDL_Renderer *renderer, TTF_Font *font )
 
 void SGUI_Menu_draw( SGUI_Menu *menu )
 {
-	SDL_Rect draw_target;
+	SDL_Rect draw_target = {
+		.x = menu->x,
+		.y = menu->y,
+		.w = menu->w,
+		.h = menu->h
+	};
 
 	// stop if not visible
 	if (menu->visible == false)
 		return;
+
+	// draw bg
+	SDL_SetRenderDrawColor(
+		menu->renderer,
+		menu->bg_color.r,
+		menu->bg_color.g,
+		menu->bg_color.b,
+		menu->bg_color.a);
+	SDL_RenderFillRect(menu->renderer, &draw_target);
 
 	// draw labels
 	for (uint8_t i = 0; i < menu->label_count; i++)
 	{
 		if (menu->labels[i]->visible)
 		{
-			draw_target.x = menu->labels[i]->x;
-			draw_target.y = menu->labels[i]->y;
-			draw_target.w = menu->labels[i]->w;
-			draw_target.h = menu->labels[i]->h;
-
-			SDL_RenderCopy(
-				menu->renderer,
-				menu->labels[i]->sprite.texture,
-				NULL,
-				&draw_target);
+            SGUI_Label_draw(menu->labels[i]);
 		}
 	}
 
@@ -64,16 +76,7 @@ void SGUI_Menu_draw( SGUI_Menu *menu )
 	{
 		if (menu->buttons[i]->visible)
 		{
-			draw_target.x = menu->buttons[i]->x;
-			draw_target.y = menu->buttons[i]->y;
-			draw_target.w = menu->buttons[i]->w;
-			draw_target.h = menu->buttons[i]->h;
-
-			SDL_RenderCopy(
-				menu->renderer,
-				menu->buttons[i]->sprite.texture,
-				NULL,
-				&draw_target);
+			SGUI_Button_draw(menu->buttons[i]);
 		}
 	}
 
@@ -82,16 +85,7 @@ void SGUI_Menu_draw( SGUI_Menu *menu )
 	{
 		if (menu->entries[i]->visible)
 		{
-			draw_target.x = menu->entries[i]->x;
-			draw_target.y = menu->entries[i]->y;
-			draw_target.w = menu->entries[i]->w;
-			draw_target.h = menu->entries[i]->h;
-
-			SDL_RenderCopy(
-				menu->renderer,
-				menu->entries[i]->sprite.texture,
-				NULL,
-				&draw_target);
+			SGUI_Entry_draw(menu->entries[i]);
 		}
 	}
 }
@@ -168,13 +162,31 @@ void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event )
         {
         	// add typed character, update sprite
         	strncat(menu->entries[menu->focused_entry]->text, event->text.text, 1);
-        	SGUI_clear_sprite(&menu->entries[menu->focused_entry]->sprite);
-        	menu->entries[menu->focused_entry]->sprite = SGUI_sprite_from_text(
+        	SGUI_Sprite_clear(&menu->entries[menu->focused_entry]->sprite);
+        	menu->entries[menu->focused_entry]->sprite = SGUI_Sprite_from_text(
         		menu->renderer,
         		menu->entries[menu->focused_entry]->text,
         		menu->font,
         		menu->entries[menu->focused_entry]->font_color);
         }
 		break;
+    }
+}
+
+void SGUI_Menu_clear( SGUI_Menu *menu )
+{
+    for (uint8_t i = 0; i < menu->label_count; i++)
+    {
+    	SGUI_Sprite_clear(&menu->labels[i]->sprite);
+    }
+
+    for (uint8_t i = 0; i < menu->button_count; i++)
+    {
+    	SGUI_Sprite_clear(&menu->buttons[i]->sprite);
+    }
+
+    for (uint8_t i = 0; i < menu->entry_count; i++)
+    {
+    	SGUI_Sprite_clear(&menu->entries[i]->sprite);
     }
 }

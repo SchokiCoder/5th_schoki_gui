@@ -22,19 +22,30 @@
 #include <stdint.h>
 #include "sprite.h"
 
+typedef struct SGUI_Theme SGUI_Theme;
+typedef struct SGUI_Menu SGUI_Menu;
+
 #define SGUI_LABEL_MAX_TEXT_LEN 32
 
 typedef struct SGUI_Label
 {
+	SGUI_Menu *menu;
 	bool visible;
 	char text[SGUI_LABEL_MAX_TEXT_LEN];
 	SGUI_Sprite sprite;
+
 	int32_t x;
 	int32_t y;
 	int32_t w;
 	int32_t h;
+
+	SDL_Color font_color;
+	SDL_Color bg_color;
+	SDL_Color border_color;
 } SGUI_Label ;
 
-SGUI_Label SGUI_Label_new( void );
+void SGUI_Label_new( SGUI_Label*, SGUI_Menu*, const SGUI_Theme* );
+
+void SGUI_Label_draw( SGUI_Label* );
 
 #endif /* SGUI_LABEL_H */
