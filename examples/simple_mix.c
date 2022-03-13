@@ -21,12 +21,24 @@
 #include "menu.h"
 #include "label.h"
 #include "button.h"
+#include "entry.h"
 #include "sprite.h"
+
+static const char PATH_FONT[] = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
+static const uint32_t FONT_SIZE = 12;
+static const SDL_Color FONT_COLOR = {
+	.r = 0,
+	.g = 0,
+	.b = 0,
+	.a = 255
+};
 
 static const char SPRITE_TEXT[] = "Sprite";
 static const char LABEL_TEXT[] = "Label";
 static const char BUTTON_TEXT[] = "Button";
 static const char BUTTON_CLICK_TEXT[] = "yaaay";
+static const char ENTRY0_TEXT[] = "e0";
+static const char ENTRY1_TEXT[] = "e1";
 
 static const int32_t SPRITE_X = 10;
 static const int32_t SPRITE_Y = 10;
@@ -37,14 +49,15 @@ static const int32_t LABEL_Y = 30;
 static const int32_t BUTTON_X = 10;
 static const int32_t BUTTON_Y = 50;
 
-static const char PATH_FONT[] = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
-static const uint32_t FONT_SIZE = 12;
-static const SDL_Color FONT_COLOR = {
-	.r = 0,
-	.g = 0,
-	.b = 0,
-	.a = 255
-};
+static const int32_t ENTRY0_X = 10;
+static const int32_t ENTRY0_Y = 70;
+static const int32_t ENTRY0_W = FONT_SIZE * 16;
+static const int32_t ENTRY0_H = FONT_SIZE;
+
+static const int32_t ENTRY1_X = 10 + FONT_SIZE * 16 + 10;
+static const int32_t ENTRY1_Y = 70;
+static const int32_t ENTRY1_W = FONT_SIZE * 16;
+static const int32_t ENTRY1_H = FONT_SIZE;
 
 void button_click(void *data)
 {
@@ -66,6 +79,8 @@ int main( void )
 	SDL_Rect rect_sprite;
 	SGUI_Label label;
 	SGUI_Button button;
+	SGUI_Entry entry0;
+	SGUI_Entry entry1;
 
 	// init SDL
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -98,7 +113,6 @@ int main( void )
 		return 1;
 	}
 
-    // make sprite
 	sprite = SGUI_sprite_from_text(renderer, SPRITE_TEXT, font, FONT_COLOR);
 
 	rect_sprite.x = SPRITE_X;
@@ -107,16 +121,28 @@ int main( void )
 	rect_sprite.h = sprite.surface->h;
 
 	// make menu
-	menu = SGUI_Menu_new();
+	menu = SGUI_Menu_new(renderer, font);
 	label = SGUI_Label_new();
 	button = SGUI_Button_new();
+	entry0 = SGUI_Entry_new();
+	entry1 = SGUI_Entry_new();
 
 	label.sprite = SGUI_sprite_from_text(renderer, LABEL_TEXT, font, FONT_COLOR);
 	button.sprite = SGUI_sprite_from_text(renderer, BUTTON_TEXT, font, FONT_COLOR);
 
+	strcpy(entry0.text, ENTRY0_TEXT);
+	strcpy(entry1.text, ENTRY1_TEXT);
+
+	entry0.sprite = SGUI_sprite_from_text(renderer, entry0.text, font, FONT_COLOR);
+	entry1.sprite = SGUI_sprite_from_text(renderer, entry1.text, font, FONT_COLOR);
+
 	label.visible = true;
 	button.visible = true;
 	button.active = true;
+	entry0.visible = true;
+	entry0.active = true;
+	entry1.visible = true;
+	entry1.active = true;
 
 	label.x = LABEL_X;
 	label.y = LABEL_Y;
@@ -128,6 +154,16 @@ int main( void )
 	button.w = button.sprite.surface->w;
 	button.h = button.sprite.surface->h;
 
+	entry0.x = ENTRY0_X;
+	entry0.y = ENTRY0_Y;
+	entry0.w = ENTRY0_W;
+	entry0.h = ENTRY0_H;
+
+	entry1.x = ENTRY1_X;
+	entry1.y = ENTRY1_Y;
+	entry1.w = ENTRY1_W;
+	entry1.h = ENTRY1_H;
+
 	menu.visible = true;
 	menu.active = true;
 
@@ -136,6 +172,12 @@ int main( void )
 
 	menu.buttons[0] = &button;
 	menu.button_count++;
+
+	menu.entries[0] = &entry0;
+	menu.entry_count++;
+
+	menu.entries[1] = &entry1;
+	menu.entry_count++;
 
 	button.func_click = button_click;
 	button.data_click = (char*) BUTTON_CLICK_TEXT;
@@ -171,7 +213,7 @@ int main( void )
 			&rect_sprite);
 
 		// draw menu
-		SGUI_Menu_draw(&menu, renderer);
+		SGUI_Menu_draw(&menu);
 
 		// show drawn image
 		SDL_RenderPresent(renderer);

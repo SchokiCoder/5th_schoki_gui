@@ -16,13 +16,15 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef SGUI_SGUI_H
-#define SGUI_SGUI_H
+#include "entry.h"
 
-#include <stdint.h>
+SGUI_Entry SGUI_Entry_new( void )
+{
+	SGUI_Entry result = {
+		.text = "",
+		.sprite = {.invalid = false},
+		.font_color = {.r = 0, .g = 0, .b = 0, .a = 255}
+	};
 
-#define API_MAJOR 0
-#define API_MINOR 2
-#define API_PATCH 0
-
-#endif /* SGUI_SGUI_H */
+	return result;
+}

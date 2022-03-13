@@ -16,42 +16,29 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef SGUI_MENU_H
-#define SGUI_MENU_H
+#ifndef SGUI_ENTRY_H
+#define SGUI_ENTRY_H
 
-#include "label.h"
-#include "button.h"
-#include "entry.h"
 #include <stdbool.h>
 #include <stdint.h>
-#include <SDL_render.h>
-#include <SDL_ttf.h>
+#include "sprite.h"
 
-#define SGUI_MENU_MAX_WIDGETS 16 /* per type */
+#define SGUI_ENTRY_MAX_TEXT_LEN 64
 
-typedef struct SGUI_Menu
+typedef struct SGUI_Entry
 {
-	SDL_Renderer *renderer;
-	TTF_Font *font;
-
 	bool visible;
 	bool active;
+	char text[SGUI_ENTRY_MAX_TEXT_LEN];
+	SGUI_Sprite sprite;
+	int32_t x;
+	int32_t y;
+	int32_t w;
+	int32_t h;
 
-	uint8_t label_count;
-	SGUI_Label *labels[SGUI_MENU_MAX_WIDGETS];
+	SDL_Color font_color;
+} SGUI_Entry ;
 
-	uint8_t button_count;
-	SGUI_Button *buttons[SGUI_MENU_MAX_WIDGETS];
+SGUI_Entry SGUI_Entry_new( void );
 
-	uint8_t focused_entry;
-	uint8_t entry_count;
-	SGUI_Entry *entries[SGUI_MENU_MAX_WIDGETS];
-} SGUI_Menu ;
-
-SGUI_Menu SGUI_Menu_new( SDL_Renderer*, TTF_Font* );
-
-void SGUI_Menu_draw( SGUI_Menu* );
-
-void SGUI_Menu_handle_events( SGUI_Menu*, SDL_Event* );
-
-#endif /* SGUI_MENU_H */
+#endif /* SGUI_ENTRY_H */

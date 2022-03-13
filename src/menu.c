@@ -19,17 +19,21 @@
 #include <SDL_events.h>
 #include "menu.h"
 
-SGUI_Menu SGUI_Menu_new( void )
+SGUI_Menu SGUI_Menu_new( SDL_Renderer *renderer, TTF_Font *font )
 {
     SGUI_Menu result = {
+		.renderer = renderer,
+		.font = font,
         .label_count = 0,
-        .button_count = 0
+        .button_count = 0,
+        .entry_count = 0,
+        .focused_entry = 0
     };
 
     return result;
 }
 
-void SGUI_Menu_draw( SGUI_Menu *menu, SDL_Renderer *renderer )
+void SGUI_Menu_draw( SGUI_Menu *menu )
 {
 	SDL_Rect draw_target;
 
@@ -48,7 +52,7 @@ void SGUI_Menu_draw( SGUI_Menu *menu, SDL_Renderer *renderer )
 			draw_target.h = menu->labels[i]->h;
 
 			SDL_RenderCopy(
-				renderer,
+				menu->renderer,
 				menu->labels[i]->sprite.texture,
 				NULL,
 				&draw_target);
@@ -66,8 +70,26 @@ void SGUI_Menu_draw( SGUI_Menu *menu, SDL_Renderer *renderer )
 			draw_target.h = menu->buttons[i]->h;
 
 			SDL_RenderCopy(
-				renderer,
+				menu->renderer,
 				menu->buttons[i]->sprite.texture,
+				NULL,
+				&draw_target);
+		}
+	}
+
+	// draw entries
+	for (uint8_t i = 0; i < menu->entry_count; i++)
+	{
+		if (menu->entries[i]->visible)
+		{
+			draw_target.x = menu->entries[i]->x;
+			draw_target.y = menu->entries[i]->y;
+			draw_target.w = menu->entries[i]->w;
+			draw_target.h = menu->entries[i]->h;
+
+			SDL_RenderCopy(
+				menu->renderer,
+				menu->entries[i]->sprite.texture,
 				NULL,
 				&draw_target);
 		}
@@ -101,15 +123,58 @@ void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event )
 				menu->buttons[i]->func_click == NULL)
 				continue;
 
-			// if mouse hit button, execute event-function
+			// if mouse hit button
 			mouse_target.x = menu->buttons[i]->x;
 			mouse_target.y = menu->buttons[i]->y;
 			mouse_target.w = menu->buttons[i]->w;
 			mouse_target.h = menu->buttons[i]->h;
 
 			if (SDL_PointInRect(&mouse, &mouse_target))
+			{
+				// execute event-function, stop
 				menu->buttons[i]->func_click(menu->buttons[i]->data_click);
+				return;
+			}
+    	}
+
+    	// check entries
+		for (uint8_t i = 0; i < menu->entry_count; i++)
+    	{
+    		// if not visible or not active, skip
+			if (menu->entries[i]->visible == false ||
+				menu->entries[i]->active == false)
+				continue;
+
+			// if mouse hit entry
+			mouse_target.x = menu->entries[i]->x;
+			mouse_target.y = menu->entries[i]->y;
+			mouse_target.w = menu->entries[i]->w;
+			mouse_target.h = menu->entries[i]->h;
+
+			if (SDL_PointInRect(&mouse, &mouse_target))
+			{
+                // mark entry as focused, stop
+                menu->focused_entry = i;
+                return;
+			}
     	}
     	break;
+
+	// keyboard
+	case SDL_TEXTINPUT:
+
+        // if focused entry exists
+        if (menu->focused_entry < menu->entry_count)
+        {
+        	// add typed character, update sprite
+        	strncat(menu->entries[menu->focused_entry]->text, event->text.text, 1);
+        	SGUI_clear_sprite(&menu->entries[menu->focused_entry]->sprite);
+        	menu->entries[menu->focused_entry]->sprite = SGUI_sprite_from_text(
+        		menu->renderer,
+        		menu->entries[menu->focused_entry]->text,
+        		menu->font,
+        		menu->entries[menu->focused_entry]->font_color);
+        }
+		break;
     }
 }
