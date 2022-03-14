@@ -25,13 +25,15 @@
 #include "entry.h"
 #include "sprite.h"
 
+static const SGUI_Theme *TEST_THEME = &SGUI_THEME_DARK;
+
 static const char PATH_FONT[] = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
 static const uint32_t FONT_SIZE = 12;
 
 static const char SPRITE_TEXT[] = "Sprite";
 static const char LABEL_TEXT[] = "Label";
-static const char BUTTON_TEXT[] = "Button";
-static const char BUTTON_CLICK_TEXT[] = "yaaay";
+static const char BUTTON0_TEXT[] = "i toggle";
+static const char BUTTON1_TEXT[] = "i am toggled";
 static const char ENTRY0_TEXT[] = "e0";
 static const char ENTRY1_TEXT[] = "e1";
 
@@ -46,8 +48,11 @@ static const int32_t SPRITE_Y = 10;
 static const int32_t LABEL_X = 10;
 static const int32_t LABEL_Y = 30;
 
-static const int32_t BUTTON_X = 10;
-static const int32_t BUTTON_Y = 50;
+static const int32_t BUTTON0_X = 10;
+static const int32_t BUTTON0_Y = 50;
+
+static const int32_t BUTTON1_X = 70;
+static const int32_t BUTTON1_Y = 50;
 
 static const int32_t ENTRY0_X = 10;
 static const int32_t ENTRY0_Y = 70;
@@ -59,11 +64,23 @@ static const int32_t ENTRY1_Y = 70;
 static const int32_t ENTRY1_W = FONT_SIZE * 16;
 static const int32_t ENTRY1_H = FONT_SIZE;
 
-void button_click(void *data)
+struct Button0Data
 {
-	char *str = (char*) data;
+	SGUI_Button *btn;
+	SGUI_Entry *txt;
+};
 
-	printf("%s\n", str);
+void button0_click(void *data)
+{
+	struct Button0Data *parsed_data = (struct Button0Data*) data;
+
+	parsed_data->btn->active = !parsed_data->btn->active;
+	parsed_data->txt->active = !parsed_data->txt->active;
+}
+
+void button1_click()
+{
+	printf("yaaay\n");
 }
 
 int main( void )
@@ -78,9 +95,11 @@ int main( void )
 	SGUI_Sprite sprite = {.invalid = false};
 	SDL_Rect rect_sprite;
 	SGUI_Label label;
-	SGUI_Button button;
+	SGUI_Button button0;
+	SGUI_Button button1;
 	SGUI_Entry entry0;
 	SGUI_Entry entry1;
+	struct Button0Data button0_data;
 
 	// init SDL
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -116,6 +135,7 @@ int main( void )
 		return 1;
 	}
 
+	// make standalone sprite
 	sprite = SGUI_Sprite_from_text(renderer, SPRITE_TEXT, font, SGUI_THEME_DARK.label_font_color);
 
 	rect_sprite.x = SPRITE_X;
@@ -124,21 +144,30 @@ int main( void )
 	rect_sprite.h = sprite.surface->h;
 
 	// make menu
-	menu = SGUI_Menu_new(renderer, font, &SGUI_THEME_DARK);
-	SGUI_Label_new(&label, &menu, &SGUI_THEME_DARK);
-	SGUI_Button_new(&button, &menu, &SGUI_THEME_DARK);
-	SGUI_Entry_new(&entry0, &menu, &SGUI_THEME_DARK);
-	SGUI_Entry_new(&entry1, &menu, &SGUI_THEME_DARK);
+	menu = SGUI_Menu_new(renderer, font, TEST_THEME);
+	SGUI_Label_new(&label, &menu, TEST_THEME);
+	SGUI_Button_new(&button0, &menu, TEST_THEME);
+	SGUI_Button_new(&button1, &menu, TEST_THEME);
+	SGUI_Entry_new(&entry0, &menu, TEST_THEME);
+	SGUI_Entry_new(&entry1, &menu, TEST_THEME);
 
-	label.sprite = SGUI_Sprite_from_text(renderer, LABEL_TEXT, font, SGUI_THEME_DARK.label_font_color);
-	button.sprite = SGUI_Sprite_from_text(renderer, BUTTON_TEXT, font, SGUI_THEME_DARK.button_font_color);
+	// make widget text sprites
+	strcpy(label.text, LABEL_TEXT);
+	SGUI_Label_update_sprite(&label);
+
+	strcpy(button0.text, BUTTON0_TEXT);
+	SGUI_Button_update_sprite(&button0);
+
+	strcpy(button1.text, BUTTON1_TEXT);
+	SGUI_Button_update_sprite(&button1);
 
 	strcpy(entry0.text, ENTRY0_TEXT);
+	SGUI_Entry_update_sprite(&entry0);
+
 	strcpy(entry1.text, ENTRY1_TEXT);
+	SGUI_Entry_update_sprite(&entry1);
 
-	entry0.sprite = SGUI_Sprite_from_text(renderer, entry0.text, font, SGUI_THEME_DARK.entry_font_color);
-	entry1.sprite = SGUI_Sprite_from_text(renderer, entry1.text, font, SGUI_THEME_DARK.entry_font_color);
-
+	// set widget positions
 	menu.x = MENU_X;
 	menu.y = MENU_Y;
 	menu.w = MENU_W;
@@ -149,10 +178,15 @@ int main( void )
 	label.w = label.sprite.surface->w;
 	label.h = label.sprite.surface->h;
 
-	button.x = BUTTON_X;
-	button.y = BUTTON_Y;
-	button.w = button.sprite.surface->w;
-	button.h = button.sprite.surface->h;
+	button0.x = BUTTON0_X;
+	button0.y = BUTTON0_Y;
+	button0.w = button0.sprite.surface->w;
+	button0.h = button0.sprite.surface->h;
+
+	button1.x = BUTTON1_X;
+	button1.y = BUTTON1_Y;
+	button1.w = button1.sprite.surface->w;
+	button1.h = button1.sprite.surface->h;
 
 	entry0.x = ENTRY0_X;
 	entry0.y = ENTRY0_Y;
@@ -164,11 +198,14 @@ int main( void )
 	entry1.w = ENTRY1_W;
 	entry1.h = ENTRY1_H;
 
-	menu.visible = true;
-	menu.active = true;
+	// set widget event functions
+	button0_data.btn = &button1;
+	button0_data.txt = &entry1;
 
-	button.func_click = button_click;
-	button.data_click = (char*) BUTTON_CLICK_TEXT;
+	button0.func_click = button0_click;
+	button0.data_click = &button0_data;
+
+	button1.func_click = button1_click;
 
 	// mainloop
     while (active)

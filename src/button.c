@@ -23,17 +23,28 @@
 void SGUI_Button_new( SGUI_Button *button, SGUI_Menu *menu, const SGUI_Theme *theme )
 {
 	button->menu = menu;
-	button->sprite.invalid = false;
+	button->sprite = SGUI_Sprite_new();
 	button->visible = true;
 	button->active = true;
 	button->font_color = theme->button_font_color;
 	button->bg_color = theme->button_bg_color;
 	button->border_color = theme->button_border_color;
+	button->disabled_color = theme->button_disabled_color;
 	button->func_click = NULL;
 	button->data_click = NULL;
 
 	menu->buttons[menu->button_count] = button;
 	menu->button_count++;
+}
+
+void SGUI_Button_update_sprite( SGUI_Button *button )
+{
+	SGUI_Sprite_clear(&button->sprite);
+	button->sprite = SGUI_Sprite_from_text(
+		button->menu->renderer,
+		button->text,
+		button->menu->font,
+		button->font_color);
 }
 
 void SGUI_Button_draw( SGUI_Button *button )
@@ -69,4 +80,16 @@ void SGUI_Button_draw( SGUI_Button *button )
 		button->sprite.texture,
 		NULL,
 		&draw_target);
+
+	// if disabled, draw disabled shade
+	if (button->active == false)
+	{
+		SDL_SetRenderDrawColor(
+			button->menu->renderer,
+			button->disabled_color.r,
+			button->disabled_color.g,
+			button->disabled_color.b,
+			button->disabled_color.a);
+		SDL_RenderFillRect(button->menu->renderer, &draw_target);
+	}
 }

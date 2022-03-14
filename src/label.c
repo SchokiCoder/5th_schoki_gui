@@ -23,7 +23,7 @@
 void SGUI_Label_new( SGUI_Label *label, SGUI_Menu *menu, const SGUI_Theme *theme )
 {
 	label->menu = menu;
-	label->sprite.invalid = false;
+	label->sprite = SGUI_Sprite_new();
 	label->visible = true;
 	label->font_color = theme->label_font_color;
 	label->bg_color = theme->label_bg_color;
@@ -31,6 +31,16 @@ void SGUI_Label_new( SGUI_Label *label, SGUI_Menu *menu, const SGUI_Theme *theme
 
 	menu->labels[menu->label_count] = label;
 	menu->label_count++;
+}
+
+void SGUI_Label_update_sprite( SGUI_Label *label )
+{
+	SGUI_Sprite_clear(&label->sprite);
+	label->sprite = SGUI_Sprite_from_text(
+		label->menu->renderer,
+		label->text,
+		label->menu->font,
+		label->font_color);
 }
 
 void SGUI_Label_draw( SGUI_Label *label )

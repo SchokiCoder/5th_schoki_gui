@@ -46,6 +46,8 @@ typedef struct SGUI_Label
 
 void SGUI_Label_new( SGUI_Label*, SGUI_Menu*, const SGUI_Theme* );
 
+void SGUI_Label_update_sprite( SGUI_Label* );
+
 void SGUI_Label_draw( SGUI_Label* );
 
 #endif /* SGUI_LABEL_H */

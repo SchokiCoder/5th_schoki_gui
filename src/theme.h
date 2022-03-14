@@ -32,10 +32,12 @@ typedef struct SGUI_Theme
     SDL_Color button_font_color;
     SDL_Color button_bg_color;
     SDL_Color button_border_color;
+    SDL_Color button_disabled_color;
 
     SDL_Color entry_font_color;
     SDL_Color entry_bg_color;
     SDL_Color entry_border_color;
+    SDL_Color entry_disabled_color;
 } SGUI_Theme ;
 
 #endif /* SGUI_THEME_H */

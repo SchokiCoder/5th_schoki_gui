@@ -24,17 +24,19 @@
 static const SGUI_Theme SGUI_THEME_LIGHT = {
 	.menu_bg_color = {.r = 200, .g = 200, .b = 200, .a = 255},
 
-	.label_font_color = {.r = 255, .g = 255, .b = 255, .a = 255},
+	.label_font_color = {.r = 50, .g = 50, .b = 50, .a = 255},
     .label_bg_color = {.r = 0, .g = 0, .b = 0, .a = 0},
     .label_border_color = {.r = 0, .g = 0, .b = 0, .a = 0},
 
     .button_font_color = {.r = 0, .g = 0, .b = 0, .a = 255},
     .button_bg_color = {.r = 255, .g = 255, .b = 255, .a = 255},
     .button_border_color = {.r = 0, .g = 0, .b = 0, .a = 255},
+    .button_disabled_color = {.r = 0, .g = 0, .b = 0, .a = 50},
 
     .entry_font_color = {.r = 0, .g = 0, .b = 0, .a = 255},
     .entry_bg_color = {.r = 240, .g = 240, .b = 240, .a = 255},
-    .entry_border_color = {.r = 0, .g = 0, .b = 0, .a = 255}
+    .entry_border_color = {.r = 0, .g = 0, .b = 0, .a = 255},
+    .entry_disabled_color = {.r = 0, .g = 0, .b = 0, .a = 50}
 };
 
 static const SGUI_Theme SGUI_THEME_DARK = {
@@ -47,10 +49,12 @@ static const SGUI_Theme SGUI_THEME_DARK = {
     .button_font_color = {.r = 200, .g = 200, .b = 200, .a = 255},
     .button_bg_color = {.r = 50, .g = 50, .b = 50, .a = 255},
     .button_border_color = {.r = 70, .g = 70, .b = 70, .a = 255},
+    .button_disabled_color = {.r = 0, .g = 0, .b = 0, .a = 75},
 
     .entry_font_color = {.r = 200, .g = 200, .b = 200, .a = 255},
     .entry_bg_color = {.r = 65, .g = 65, .b = 65, .a = 255},
-    .entry_border_color = {.r = 70, .g = 70, .b = 70, .a = 255}
+    .entry_border_color = {.r = 70, .g = 70, .b = 70, .a = 255},
+    .entry_disabled_color = {.r = 0, .g = 0, .b = 0, .a = 75}
 };
 
 #endif /* SGUI_DEF_THEMES_H */

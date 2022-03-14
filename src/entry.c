@@ -23,16 +23,27 @@
 void SGUI_Entry_new( SGUI_Entry *entry, SGUI_Menu *menu, const SGUI_Theme *theme )
 {
 	entry->menu = menu;
+	entry->sprite = SGUI_Sprite_new();
 	entry->text[0] = '\0';
 	entry->visible = true;
 	entry->active = true;
-	entry->sprite.invalid = false;
 	entry->font_color = theme->entry_font_color;
 	entry->bg_color = theme->entry_bg_color;
 	entry->border_color = theme->entry_border_color;
+	entry->disabled_color = theme->entry_disabled_color;
 
 	menu->entries[menu->entry_count] = entry;
 	menu->entry_count++;
+}
+
+void SGUI_Entry_update_sprite( SGUI_Entry *entry )
+{
+	SGUI_Sprite_clear(&entry->sprite);
+	entry->sprite = SGUI_Sprite_from_text(
+		entry->menu->renderer,
+		entry->text,
+		entry->menu->font,
+		entry->font_color);
 }
 
 void SGUI_Entry_draw( SGUI_Entry *entry )
@@ -68,4 +79,16 @@ void SGUI_Entry_draw( SGUI_Entry *entry )
 		entry->sprite.texture,
 		NULL,
 		&draw_target);
+
+	// if disabled, draw disabled shade
+	if (entry->active == false)
+	{
+		SDL_SetRenderDrawColor(
+			entry->menu->renderer,
+			entry->disabled_color.r,
+			entry->disabled_color.g,
+			entry->disabled_color.b,
+			entry->disabled_color.a);
+		SDL_RenderFillRect(entry->menu->renderer, &draw_target);
+	}
 }

@@ -44,12 +44,15 @@ typedef struct SGUI_Button
 	SDL_Color font_color;
 	SDL_Color bg_color;
 	SDL_Color border_color;
+	SDL_Color disabled_color;
 
 	void (*func_click) (void*);
 	void *data_click;
 } SGUI_Button ;
 
 void SGUI_Button_new( SGUI_Button*, SGUI_Menu*, const SGUI_Theme* );
+
+void SGUI_Button_update_sprite( SGUI_Button* );
 
 void SGUI_Button_draw( SGUI_Button* );
 

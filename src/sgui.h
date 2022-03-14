@@ -19,10 +19,8 @@
 #ifndef SGUI_SGUI_H
 #define SGUI_SGUI_H
 
-#include <stdint.h>
-
 #define SGUI_API_MAJOR 0
-#define SGUI_API_MINOR 3
+#define SGUI_API_MINOR 4
 #define SGUI_API_PATCH 0
 
 #endif /* SGUI_SGUI_H */

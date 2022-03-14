@@ -162,12 +162,7 @@ void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event )
         {
         	// add typed character, update sprite
         	strncat(menu->entries[menu->focused_entry]->text, event->text.text, 1);
-        	SGUI_Sprite_clear(&menu->entries[menu->focused_entry]->sprite);
-        	menu->entries[menu->focused_entry]->sprite = SGUI_Sprite_from_text(
-        		menu->renderer,
-        		menu->entries[menu->focused_entry]->text,
-        		menu->font,
-        		menu->entries[menu->focused_entry]->font_color);
+        	SGUI_Entry_update_sprite(menu->entries[menu->focused_entry]);
         }
 		break;
     }

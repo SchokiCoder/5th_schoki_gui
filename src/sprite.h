@@ -31,6 +31,8 @@ typedef struct SGUI_Sprite
 	SDL_Texture *texture;
 } SGUI_Sprite ;
 
+SGUI_Sprite SGUI_Sprite_new( void );
+
 SGUI_Sprite SGUI_Sprite_from_file( SDL_Renderer*, const char* );
 
 SGUI_Sprite SGUI_Sprite_from_text( SDL_Renderer*, const char*, TTF_Font*, SDL_Color);

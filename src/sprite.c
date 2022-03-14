@@ -20,6 +20,17 @@
 #include <SDL_ttf.h>
 #include "sprite.h"
 
+SGUI_Sprite SGUI_Sprite_new( void )
+{
+	SGUI_Sprite result = {
+		.invalid = false,
+		.surface = NULL,
+		.texture = NULL
+	};
+
+	return result;
+}
+
 void SGUI_Sprite_create_texture( SGUI_Sprite *sprite, SDL_Renderer *renderer )
 {
 	// create texture

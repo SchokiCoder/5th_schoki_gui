@@ -45,9 +45,12 @@ typedef struct SGUI_Entry
 	SDL_Color font_color;
 	SDL_Color bg_color;
 	SDL_Color border_color;
+	SDL_Color disabled_color;
 } SGUI_Entry ;
 
 void SGUI_Entry_new( SGUI_Entry*, SGUI_Menu*, const SGUI_Theme* );
+
+void SGUI_Entry_update_sprite( SGUI_Entry* );
 
 void SGUI_Entry_draw( SGUI_Entry* );
 
