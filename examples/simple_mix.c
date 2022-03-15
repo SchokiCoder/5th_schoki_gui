@@ -162,41 +162,41 @@ int main( void )
 	SGUI_Button_update_sprite(&button1);
 
 	strcpy(entry0.text, ENTRY0_TEXT);
-	SGUI_Entry_update_sprite(&entry0);
+	SGUI_Entry_update_sprites(&entry0);
 
 	strcpy(entry1.text, ENTRY1_TEXT);
-	SGUI_Entry_update_sprite(&entry1);
+	SGUI_Entry_update_sprites(&entry1);
 
 	// set widget positions
-	menu.x = MENU_X;
-	menu.y = MENU_Y;
-	menu.w = MENU_W;
-	menu.h = MENU_H;
+	menu.rect.x = MENU_X;
+	menu.rect.y = MENU_Y;
+	menu.rect.w = MENU_W;
+	menu.rect.h = MENU_H;
 
-	label.x = LABEL_X;
-	label.y = LABEL_Y;
-	label.w = label.sprite.surface->w;
-	label.h = label.sprite.surface->h;
+	label.rect.x = LABEL_X;
+	label.rect.y = LABEL_Y;
+	label.rect.w = label.sprite.surface->w;
+	label.rect.h = label.sprite.surface->h;
 
-	button0.x = BUTTON0_X;
-	button0.y = BUTTON0_Y;
-	button0.w = button0.sprite.surface->w;
-	button0.h = button0.sprite.surface->h;
+	button0.rect.x = BUTTON0_X;
+	button0.rect.y = BUTTON0_Y;
+	button0.rect.w = button0.sprite.surface->w;
+	button0.rect.h = button0.sprite.surface->h;
 
-	button1.x = BUTTON1_X;
-	button1.y = BUTTON1_Y;
-	button1.w = button1.sprite.surface->w;
-	button1.h = button1.sprite.surface->h;
+	button1.rect.x = BUTTON1_X;
+	button1.rect.y = BUTTON1_Y;
+	button1.rect.w = button1.sprite.surface->w;
+	button1.rect.h = button1.sprite.surface->h;
 
-	entry0.x = ENTRY0_X;
-	entry0.y = ENTRY0_Y;
-	entry0.w = ENTRY0_W;
-	entry0.h = ENTRY0_H;
+	entry0.rect.x = ENTRY0_X;
+	entry0.rect.y = ENTRY0_Y;
+	entry0.rect.w = ENTRY0_W;
+	entry0.rect.h = ENTRY0_H;
 
-	entry1.x = ENTRY1_X;
-	entry1.y = ENTRY1_Y;
-	entry1.w = ENTRY1_W;
-	entry1.h = ENTRY1_H;
+	entry1.rect.x = ENTRY1_X;
+	entry1.rect.y = ENTRY1_Y;
+	entry1.rect.w = ENTRY1_W;
+	entry1.rect.h = ENTRY1_H;
 
 	// set widget event functions
 	button0_data.btn = &button1;

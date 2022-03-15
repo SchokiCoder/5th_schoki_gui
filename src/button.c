@@ -49,13 +49,6 @@ void SGUI_Button_update_sprite( SGUI_Button *button )
 
 void SGUI_Button_draw( SGUI_Button *button )
 {
-	SDL_Rect draw_target = {
-		.x = button->x,
-		.y = button->y,
-		.w = button->w,
-		.h = button->h
-	};
-
 	// draw bg
 	SDL_SetRenderDrawColor(
 		button->menu->renderer,
@@ -63,7 +56,7 @@ void SGUI_Button_draw( SGUI_Button *button )
 		button->bg_color.g,
 		button->bg_color.b,
 		button->bg_color.a);
-	SDL_RenderFillRect(button->menu->renderer, &draw_target);
+	SDL_RenderFillRect(button->menu->renderer, &button->rect);
 
 	// draw border
 	SDL_SetRenderDrawColor(
@@ -72,14 +65,14 @@ void SGUI_Button_draw( SGUI_Button *button )
 		button->border_color.g,
 		button->border_color.b,
 		button->border_color.a);
-	SDL_RenderDrawRect(button->menu->renderer, &draw_target);
+	SDL_RenderDrawRect(button->menu->renderer, &button->rect);
 
 	// draw text
 	SDL_RenderCopy(
 		button->menu->renderer,
 		button->sprite.texture,
 		NULL,
-		&draw_target);
+		&button->rect);
 
 	// if disabled, draw disabled shade
 	if (button->active == false)
@@ -90,6 +83,6 @@ void SGUI_Button_draw( SGUI_Button *button )
 			button->disabled_color.g,
 			button->disabled_color.b,
 			button->disabled_color.a);
-		SDL_RenderFillRect(button->menu->renderer, &draw_target);
+		SDL_RenderFillRect(button->menu->renderer, &button->rect);
 	}
 }

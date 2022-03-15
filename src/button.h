@@ -30,17 +30,12 @@ typedef struct SGUI_Menu SGUI_Menu;
 typedef struct SGUI_Button
 {
 	SGUI_Menu *menu;
-
 	bool visible;
 	bool active;
 	char text[SGUI_BUTTON_MAX_TEXT_LEN];
 	SGUI_Sprite sprite;
 
-	int32_t x;
-	int32_t y;
-	int32_t w;
-	int32_t h;
-
+	SDL_Rect rect;
 	SDL_Color font_color;
 	SDL_Color bg_color;
 	SDL_Color border_color;

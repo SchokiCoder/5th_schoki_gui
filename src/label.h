@@ -34,11 +34,7 @@ typedef struct SGUI_Label
 	char text[SGUI_LABEL_MAX_TEXT_LEN];
 	SGUI_Sprite sprite;
 
-	int32_t x;
-	int32_t y;
-	int32_t w;
-	int32_t h;
-
+	SDL_Rect rect;
 	SDL_Color font_color;
 	SDL_Color bg_color;
 	SDL_Color border_color;

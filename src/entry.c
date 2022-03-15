@@ -23,7 +23,10 @@
 void SGUI_Entry_new( SGUI_Entry *entry, SGUI_Menu *menu, const SGUI_Theme *theme )
 {
 	entry->menu = menu;
-	entry->sprite = SGUI_Sprite_new();
+
+	for (uint8_t i = 0; i < SGUI_ENTRY_MAX_TEXT_LEN; i++)
+		entry->sprites[i] = SGUI_Sprite_new();
+
 	entry->text[0] = '\0';
 	entry->visible = true;
 	entry->active = true;
@@ -36,24 +39,36 @@ void SGUI_Entry_new( SGUI_Entry *entry, SGUI_Menu *menu, const SGUI_Theme *theme
 	menu->entry_count++;
 }
 
-void SGUI_Entry_update_sprite( SGUI_Entry *entry )
+void SGUI_Entry_update_sprite( SGUI_Entry *entry, uint8_t pos )
 {
-	SGUI_Sprite_clear(&entry->sprite);
-	entry->sprite = SGUI_Sprite_from_text(
+	char letter[2] = {
+		[0] = entry->text[pos],
+		[1] = '\0'
+	};
+
+	// clear
+	SGUI_Sprite_clear(&entry->sprites[pos]);
+
+	// generate sprite of that letter
+	entry->sprites[pos] = SGUI_Sprite_from_text(
 		entry->menu->renderer,
-		entry->text,
+		letter,
 		entry->menu->font,
 		entry->font_color);
 }
 
+void SGUI_Entry_update_sprites( SGUI_Entry *entry )
+{
+	for (uint8_t i = 0; i < SGUI_ENTRY_MAX_TEXT_LEN; i++)
+	{
+		SGUI_Entry_update_sprite(entry, i);
+	}
+}
+
 void SGUI_Entry_draw( SGUI_Entry *entry )
 {
-	SDL_Rect draw_target = {
-		.x = entry->x,
-		.y = entry->y,
-		.w = entry->w,
-		.h = entry->h
-	};
+	SDL_Rect draw_target;
+    uint32_t text_width = 0;
 
 	// draw bg
 	SDL_SetRenderDrawColor(
@@ -62,7 +77,7 @@ void SGUI_Entry_draw( SGUI_Entry *entry )
 		entry->bg_color.g,
 		entry->bg_color.b,
 		entry->bg_color.a);
-	SDL_RenderFillRect(entry->menu->renderer, &draw_target);
+	SDL_RenderFillRect(entry->menu->renderer, &entry->rect);
 
 	// draw border
 	SDL_SetRenderDrawColor(
@@ -71,14 +86,30 @@ void SGUI_Entry_draw( SGUI_Entry *entry )
 		entry->border_color.g,
 		entry->border_color.b,
 		entry->border_color.a);
-	SDL_RenderDrawRect(entry->menu->renderer, &draw_target);
+	SDL_RenderDrawRect(entry->menu->renderer, &entry->rect);
 
 	// draw text
-	SDL_RenderCopy(
-		entry->menu->renderer,
-		entry->sprite.texture,
-		NULL,
-		&draw_target);
+	for (uint8_t i = 0; i < SGUI_ENTRY_MAX_TEXT_LEN; i++)
+	{
+		// if text ends or exceeds entry width, stop
+		if (entry->text[i] == '\0' ||
+			text_width > (uint32_t) entry->rect.w)
+			break;
+
+		// draw
+		draw_target.x = entry->rect.x + text_width;
+		draw_target.y = entry->rect.y;
+		draw_target.w = entry->sprites[i].surface->w;
+		draw_target.h = entry->sprites[i].surface->h;
+
+		SDL_RenderCopy(
+			entry->menu->renderer,
+			entry->sprites[i].texture,
+			NULL,
+			&draw_target);
+
+		text_width += draw_target.w;
+	}
 
 	// if disabled, draw disabled shade
 	if (entry->active == false)
@@ -89,6 +120,15 @@ void SGUI_Entry_draw( SGUI_Entry *entry )
 			entry->disabled_color.g,
 			entry->disabled_color.b,
 			entry->disabled_color.a);
-		SDL_RenderFillRect(entry->menu->renderer, &draw_target);
+		SDL_RenderFillRect(entry->menu->renderer, &entry->rect);
+	}
+}
+
+
+void SGUI_Entry_clear_sprites( SGUI_Entry *entry )
+{
+	for (uint8_t i = 0; i < SGUI_ENTRY_MAX_TEXT_LEN; i++)
+	{
+		SGUI_Sprite_clear(&entry->sprites[i]);
 	}
 }

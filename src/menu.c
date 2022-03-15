@@ -42,13 +42,6 @@ SGUI_Menu SGUI_Menu_new( SDL_Renderer *renderer, TTF_Font *font, const SGUI_Them
 
 void SGUI_Menu_draw( SGUI_Menu *menu )
 {
-	SDL_Rect draw_target = {
-		.x = menu->x,
-		.y = menu->y,
-		.w = menu->w,
-		.h = menu->h
-	};
-
 	// stop if not visible
 	if (menu->visible == false)
 		return;
@@ -60,7 +53,7 @@ void SGUI_Menu_draw( SGUI_Menu *menu )
 		menu->bg_color.g,
 		menu->bg_color.b,
 		menu->bg_color.a);
-	SDL_RenderFillRect(menu->renderer, &draw_target);
+	SDL_RenderFillRect(menu->renderer, &menu->rect);
 
 	// draw labels
 	for (uint8_t i = 0; i < menu->label_count; i++)
@@ -92,7 +85,6 @@ void SGUI_Menu_draw( SGUI_Menu *menu )
 
 void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event )
 {
-    SDL_Rect mouse_target;
     SDL_Point mouse;
 
     // stop if not visible or not active
@@ -118,12 +110,7 @@ void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event )
 				continue;
 
 			// if mouse hit button
-			mouse_target.x = menu->buttons[i]->x;
-			mouse_target.y = menu->buttons[i]->y;
-			mouse_target.w = menu->buttons[i]->w;
-			mouse_target.h = menu->buttons[i]->h;
-
-			if (SDL_PointInRect(&mouse, &mouse_target))
+			if (SDL_PointInRect(&mouse, &menu->buttons[i]->rect))
 			{
 				// execute event-function, stop
 				menu->buttons[i]->func_click(menu->buttons[i]->data_click);
@@ -140,12 +127,7 @@ void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event )
 				continue;
 
 			// if mouse hit entry
-			mouse_target.x = menu->entries[i]->x;
-			mouse_target.y = menu->entries[i]->y;
-			mouse_target.w = menu->entries[i]->w;
-			mouse_target.h = menu->entries[i]->h;
-
-			if (SDL_PointInRect(&mouse, &mouse_target))
+			if (SDL_PointInRect(&mouse, &menu->entries[i]->rect))
 			{
                 // mark entry as focused, stop
                 menu->focused_entry = i;
@@ -162,10 +144,29 @@ void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event )
         {
         	// add typed character, update sprite
         	strncat(menu->entries[menu->focused_entry]->text, event->text.text, 1);
-        	SGUI_Entry_update_sprite(menu->entries[menu->focused_entry]);
+        	SGUI_Entry_update_sprite(
+        		menu->entries[menu->focused_entry],
+        		strlen(menu->entries[menu->focused_entry]->text) - 1);
         }
 		break;
-    }
+
+	case SDL_KEYDOWN:
+
+		// backspace
+		if (event->key.keysym.sym == SDLK_BACKSPACE)
+		{
+			for (uint8_t i = 0; i < SGUI_ENTRY_MAX_TEXT_LEN; i++)
+			{
+                if (menu->entries[menu->focused_entry]->text[i] == '\0')
+                {
+                	menu->entries[menu->focused_entry]->text[i - 1] = '\0';
+                	break;
+                }
+			}
+		}
+
+		break;
+	}
 }
 
 void SGUI_Menu_clear( SGUI_Menu *menu )
@@ -182,6 +183,6 @@ void SGUI_Menu_clear( SGUI_Menu *menu )
 
     for (uint8_t i = 0; i < menu->entry_count; i++)
     {
-    	SGUI_Sprite_clear(&menu->entries[i]->sprite);
+    	SGUI_Entry_clear_sprites(menu->entries[i]);
     }
 }

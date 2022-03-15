@@ -31,17 +31,12 @@ typedef struct SGUI_Menu SGUI_Menu;
 typedef struct SGUI_Entry
 {
 	SGUI_Menu *menu;
-
 	bool visible;
 	bool active;
 	char text[SGUI_ENTRY_MAX_TEXT_LEN];
-	SGUI_Sprite sprite;
+	SGUI_Sprite sprites[SGUI_ENTRY_MAX_TEXT_LEN];
 
-	int32_t x;
-	int32_t y;
-	int32_t w;
-	int32_t h;
-
+	SDL_Rect rect;
 	SDL_Color font_color;
 	SDL_Color bg_color;
 	SDL_Color border_color;
@@ -50,8 +45,12 @@ typedef struct SGUI_Entry
 
 void SGUI_Entry_new( SGUI_Entry*, SGUI_Menu*, const SGUI_Theme* );
 
-void SGUI_Entry_update_sprite( SGUI_Entry* );
+void SGUI_Entry_update_sprite( SGUI_Entry*, uint8_t );
+
+void SGUI_Entry_update_sprites( SGUI_Entry* );
 
 void SGUI_Entry_draw( SGUI_Entry* );
+
+void SGUI_Entry_clear_sprites( SGUI_Entry* );
 
 #endif /* SGUI_ENTRY_H */

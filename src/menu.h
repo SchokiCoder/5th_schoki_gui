@@ -50,10 +50,7 @@ typedef struct SGUI_Menu
 	uint8_t entry_count;
 	SGUI_Entry *entries[SGUI_MENU_MAX_WIDGETS];
 
-	int32_t x;
-	int32_t y;
-	int32_t w;
-	int32_t h;
+	SDL_Rect rect;
 
 	SDL_Color bg_color;
 } SGUI_Menu ;

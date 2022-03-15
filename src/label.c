@@ -45,13 +45,6 @@ void SGUI_Label_update_sprite( SGUI_Label *label )
 
 void SGUI_Label_draw( SGUI_Label *label )
 {
-	SDL_Rect draw_target = {
-		.x = label->x,
-		.y = label->y,
-		.w = label->w,
-		.h = label->h
-	};
-
 	// draw bg
 	SDL_SetRenderDrawColor(
 		label->menu->renderer,
@@ -59,7 +52,7 @@ void SGUI_Label_draw( SGUI_Label *label )
 		label->bg_color.g,
 		label->bg_color.b,
 		label->bg_color.a);
-	SDL_RenderFillRect(label->menu->renderer, &draw_target);
+	SDL_RenderFillRect(label->menu->renderer, &label->rect);
 
 	// draw border
 	SDL_SetRenderDrawColor(
@@ -68,12 +61,12 @@ void SGUI_Label_draw( SGUI_Label *label )
 		label->border_color.g,
 		label->border_color.b,
 		label->border_color.a);
-	SDL_RenderDrawRect(label->menu->renderer, &draw_target);
+	SDL_RenderDrawRect(label->menu->renderer, &label->rect);
 
 	// draw text
 	SDL_RenderCopy(
 		label->menu->renderer,
 		label->sprite.texture,
 		NULL,
-		&draw_target);
+		&label->rect);
 }
