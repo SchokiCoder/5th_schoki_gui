@@ -21,20 +21,22 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <SM/string.h>
 #include "sprite.h"
 
 typedef struct SGUI_Theme SGUI_Theme;
 typedef struct SGUI_Menu SGUI_Menu;
 
-#define SGUI_ENTRY_MAX_TEXT_LEN 64
+#define SGUI_ENTRY_TEXT_INIT_SIZE 32
+#define SGUI_ENTRY_MAX_SHOWN_TEXT 32
 
 typedef struct SGUI_Entry
 {
 	SGUI_Menu *menu;
 	bool visible;
 	bool active;
-	char text[SGUI_ENTRY_MAX_TEXT_LEN];
-	SGUI_Sprite sprites[SGUI_ENTRY_MAX_TEXT_LEN];
+	SM_String text;
+	SGUI_Sprite sprites[SGUI_ENTRY_MAX_SHOWN_TEXT];
 
 	SDL_Rect rect;
 	SDL_Color font_color;
@@ -45,7 +47,7 @@ typedef struct SGUI_Entry
 
 void SGUI_Entry_new( SGUI_Entry*, SGUI_Menu*, const SGUI_Theme* );
 
-void SGUI_Entry_update_sprite( SGUI_Entry*, uint8_t );
+void SGUI_Entry_update_sprite( SGUI_Entry*, size_t );
 
 void SGUI_Entry_update_sprites( SGUI_Entry* );
 

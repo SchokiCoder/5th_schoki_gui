@@ -152,7 +152,13 @@ int main( void )
 	SGUI_Entry_new(&entry1, &menu, TEST_THEME);
 
 	// make widget text sprites
-	strcpy(label.text, LABEL_TEXT);
+	SM_String temp = {
+		.len = strlen(LABEL_TEXT),
+		.size = strlen(LABEL_TEXT),
+		.str = (char*) LABEL_TEXT
+	};
+
+	SM_String_copy(&label.text, &temp);
 	SGUI_Label_update_sprite(&label);
 
 	strcpy(button0.text, BUTTON0_TEXT);

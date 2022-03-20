@@ -23,6 +23,7 @@
 void SGUI_Button_new( SGUI_Button *button, SGUI_Menu *menu, const SGUI_Theme *theme )
 {
 	button->menu = menu;
+	button->text = SM_String_new(SGUI_BUTTON_TEXT_INIT_SIZE);
 	button->sprite = SGUI_Sprite_new();
 	button->visible = true;
 	button->active = true;
@@ -42,7 +43,7 @@ void SGUI_Button_update_sprite( SGUI_Button *button )
 	SGUI_Sprite_clear(&button->sprite);
 	button->sprite = SGUI_Sprite_from_text(
 		button->menu->renderer,
-		button->text,
+		button->text.str,
 		button->menu->font,
 		button->font_color);
 }

@@ -20,18 +20,19 @@
 #define SGUI_LABEL_H
 
 #include <stdint.h>
+#include <SM/string.h>
 #include "sprite.h"
 
 typedef struct SGUI_Theme SGUI_Theme;
 typedef struct SGUI_Menu SGUI_Menu;
 
-#define SGUI_LABEL_MAX_TEXT_LEN 32
+#define SGUI_LABEL_TEXT_INIT_SIZE 32
 
 typedef struct SGUI_Label
 {
 	SGUI_Menu *menu;
 	bool visible;
-	char text[SGUI_LABEL_MAX_TEXT_LEN];
+	SM_String text;
 	SGUI_Sprite sprite;
 
 	SDL_Rect rect;

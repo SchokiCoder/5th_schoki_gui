@@ -24,10 +24,10 @@ void SGUI_Entry_new( SGUI_Entry *entry, SGUI_Menu *menu, const SGUI_Theme *theme
 {
 	entry->menu = menu;
 
-	for (uint8_t i = 0; i < SGUI_ENTRY_MAX_TEXT_LEN; i++)
+	for (uint8_t i = 0; i < SGUI_ENTRY_MAX_SHOWN_TEXT; i++)
 		entry->sprites[i] = SGUI_Sprite_new();
 
-	entry->text[0] = '\0';
+	entry->text = SM_String_new(SGUI_ENTRY_TEXT_INIT_SIZE);
 	entry->visible = true;
 	entry->active = true;
 	entry->font_color = theme->entry_font_color;
@@ -39,10 +39,10 @@ void SGUI_Entry_new( SGUI_Entry *entry, SGUI_Menu *menu, const SGUI_Theme *theme
 	menu->entry_count++;
 }
 
-void SGUI_Entry_update_sprite( SGUI_Entry *entry, uint8_t pos )
+void SGUI_Entry_update_sprite( SGUI_Entry *entry, size_t pos )
 {
 	char letter[2] = {
-		[0] = entry->text[pos],
+		[0] = entry->text.str[pos],
 		[1] = '\0'
 	};
 
@@ -59,7 +59,7 @@ void SGUI_Entry_update_sprite( SGUI_Entry *entry, uint8_t pos )
 
 void SGUI_Entry_update_sprites( SGUI_Entry *entry )
 {
-	for (uint8_t i = 0; i < SGUI_ENTRY_MAX_TEXT_LEN; i++)
+	for (size_t i = 0; i < entry->text.len; i++)
 	{
 		SGUI_Entry_update_sprite(entry, i);
 	}
@@ -89,11 +89,10 @@ void SGUI_Entry_draw( SGUI_Entry *entry )
 	SDL_RenderDrawRect(entry->menu->renderer, &entry->rect);
 
 	// draw text
-	for (uint8_t i = 0; i < SGUI_ENTRY_MAX_TEXT_LEN; i++)
+	for (size_t i = 0; i < entry->text.len; i++)
 	{
-		// if text ends or exceeds entry width, stop
-		if (entry->text[i] == '\0' ||
-			text_width > (uint32_t) entry->rect.w)
+		// if text exceeds entry width, stop
+		if (text_width > (uint32_t) entry->rect.w)
 			break;
 
 		// draw
@@ -127,7 +126,7 @@ void SGUI_Entry_draw( SGUI_Entry *entry )
 
 void SGUI_Entry_clear_sprites( SGUI_Entry *entry )
 {
-	for (uint8_t i = 0; i < SGUI_ENTRY_MAX_TEXT_LEN; i++)
+	for (size_t i = 0; i < entry->text.len; i++)
 	{
 		SGUI_Sprite_clear(&entry->sprites[i]);
 	}

@@ -23,6 +23,7 @@
 void SGUI_Label_new( SGUI_Label *label, SGUI_Menu *menu, const SGUI_Theme *theme )
 {
 	label->menu = menu;
+	label->text = SM_String_new(SGUI_LABEL_TEXT_INIT_SIZE);
 	label->sprite = SGUI_Sprite_new();
 	label->visible = true;
 	label->font_color = theme->label_font_color;
@@ -38,7 +39,7 @@ void SGUI_Label_update_sprite( SGUI_Label *label )
 	SGUI_Sprite_clear(&label->sprite);
 	label->sprite = SGUI_Sprite_from_text(
 		label->menu->renderer,
-		label->text,
+		label->text.str,
 		label->menu->font,
 		label->font_color);
 }

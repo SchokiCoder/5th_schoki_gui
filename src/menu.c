@@ -143,10 +143,16 @@ void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event )
         if (menu->focused_entry < menu->entry_count)
         {
         	// add typed character, update sprite
-        	strncat(menu->entries[menu->focused_entry]->text, event->text.text, 1);
+        	SM_String new = {
+        		.str = event->text.text,
+        		.len = 1,
+        		.size = 1
+			};
+
+        	SM_String_append(&menu->entries[menu->focused_entry]->text, &new);
         	SGUI_Entry_update_sprite(
         		menu->entries[menu->focused_entry],
-        		strlen(menu->entries[menu->focused_entry]->text) - 1);
+        		menu->entries[menu->focused_entry]->text.len - 1);
         }
 		break;
 
@@ -155,14 +161,8 @@ void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event )
 		// backspace
 		if (event->key.keysym.sym == SDLK_BACKSPACE)
 		{
-			for (uint8_t i = 0; i < SGUI_ENTRY_MAX_TEXT_LEN; i++)
-			{
-                if (menu->entries[menu->focused_entry]->text[i] == '\0')
-                {
-                	menu->entries[menu->focused_entry]->text[i - 1] = '\0';
-                	break;
-                }
-			}
+			menu->entries[menu->focused_entry]->text.str[menu->entries[menu->focused_entry]->text.len - 1] = '\0';
+			menu->entries[menu->focused_entry]->text.len--;
 		}
 
 		break;
@@ -174,15 +174,18 @@ void SGUI_Menu_clear( SGUI_Menu *menu )
     for (uint8_t i = 0; i < menu->label_count; i++)
     {
     	SGUI_Sprite_clear(&menu->labels[i]->sprite);
+    	SM_String_clear(&menu->labels[i]->text);
     }
 
     for (uint8_t i = 0; i < menu->button_count; i++)
     {
     	SGUI_Sprite_clear(&menu->buttons[i]->sprite);
+    	SM_String_clear(&menu->buttons[i]->text);
     }
 
     for (uint8_t i = 0; i < menu->entry_count; i++)
     {
     	SGUI_Entry_clear_sprites(menu->entries[i]);
+    	SM_String_clear(&menu->entries[i]->text);
     }
 }
