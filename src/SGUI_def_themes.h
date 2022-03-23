@@ -19,7 +19,7 @@
 #ifndef SGUI_DEF_THEMES_H
 #define SGUI_DEF_THEMES_H
 
-#include "theme.h"
+#include "SGUI_theme.h"
 
 static const SGUI_Theme SGUI_THEME_LIGHT = {
 	.menu_bg_color = {.r = 200, .g = 200, .b = 200, .a = 255},

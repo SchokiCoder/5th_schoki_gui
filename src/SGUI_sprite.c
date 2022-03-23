@@ -18,7 +18,7 @@
 
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include "sprite.h"
+#include "SGUI_sprite.h"
 
 SGUI_Sprite SGUI_Sprite_new( void )
 {

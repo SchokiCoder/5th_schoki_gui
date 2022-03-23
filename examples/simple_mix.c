@@ -18,12 +18,13 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-#include "def_themes.h"
-#include "menu.h"
-#include "label.h"
-#include "button.h"
-#include "entry.h"
-#include "sprite.h"
+//#include <SM_string.h>
+#include "SGUI_def_themes.h"
+#include "SGUI_menu.h"
+#include "SGUI_label.h"
+#include "SGUI_button.h"
+#include "SGUI_entry.h"
+#include "SGUI_sprite.h"
 
 static const SGUI_Theme *TEST_THEME = &SGUI_THEME_DARK;
 
@@ -94,6 +95,7 @@ int main( void )
 	SGUI_Menu menu;
 	SGUI_Sprite sprite = {.invalid = false};
 	SDL_Rect rect_sprite;
+	SM_String temp;
 	SGUI_Label label;
 	SGUI_Button button0;
 	SGUI_Button button1;
@@ -152,25 +154,24 @@ int main( void )
 	SGUI_Entry_new(&entry1, &menu, TEST_THEME);
 
 	// make widget text sprites
-	SM_String temp = {
-		.len = strlen(LABEL_TEXT),
-		.size = strlen(LABEL_TEXT),
-		.str = (char*) LABEL_TEXT
-	};
-
+	temp = SM_String_contain(LABEL_TEXT);
 	SM_String_copy(&label.text, &temp);
 	SGUI_Label_update_sprite(&label);
 
-	strcpy(button0.text, BUTTON0_TEXT);
+	temp = SM_String_contain(BUTTON0_TEXT);
+	SM_String_copy(&button0.text, &temp);
 	SGUI_Button_update_sprite(&button0);
 
-	strcpy(button1.text, BUTTON1_TEXT);
+	temp = SM_String_contain(BUTTON1_TEXT);
+	SM_String_copy(&button1.text, &temp);
 	SGUI_Button_update_sprite(&button1);
 
-	strcpy(entry0.text, ENTRY0_TEXT);
+	temp = SM_String_contain(ENTRY0_TEXT);
+	SM_String_copy(&entry0.text, &temp);
 	SGUI_Entry_update_sprites(&entry0);
 
-	strcpy(entry1.text, ENTRY1_TEXT);
+	temp = SM_String_contain(ENTRY1_TEXT);
+	SM_String_copy(&entry1.text, &temp);
 	SGUI_Entry_update_sprites(&entry1);
 
 	// set widget positions

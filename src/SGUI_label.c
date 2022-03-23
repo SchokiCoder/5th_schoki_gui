@@ -16,9 +16,9 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "theme.h"
-#include "menu.h"
-#include "label.h"
+#include "SGUI_theme.h"
+#include "SGUI_menu.h"
+#include "SGUI_label.h"
 
 void SGUI_Label_new( SGUI_Label *label, SGUI_Menu *menu, const SGUI_Theme *theme )
 {

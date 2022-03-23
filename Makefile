@@ -1,44 +1,41 @@
-#    schoki_gui
-#    Copyright (C) 2022  Andy Frank Schoknecht
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+CC=cc
+CFLAGS=-std=c99 -Wall -Wextra -O3
+INCLUDE=-lSDL2 -lSDL2_ttf -lSDL2_image -lschoki_misc
+INCLUDE_DIR=-I/usr/include/SDL2 -I/usr/include/schoki_misc
+LIB_NAME=schoki_gui
+SO_NAME=lib$(LIB_NAME).so
 
-CC = cc
-API_SHORT = SGUI
-BIN_NAME = lib$(API_SHORT).so
-CFLAGS = -std=c99 -Wall -Wextra -O3 -shared -fPIC
-INCLUDE = -I /usr/include/SDL2
-LIBS = -l SDL2 -l SDL2_image -l SDL2_ttf
+all: $(SO_NAME) install
 
-PATH_INSTALL_BIN = /usr/lib/
-PATH_INSTALL_INCLUDE = /usr/include/$(API_SHORT)
+SGUI_menu.o:
+	$(CC) -c -fPIC $(CFLAGS) $(INCLUDE_DIR) src/SGUI_menu.c
 
-all: install clean
+SGUI_label.o:
+	$(CC) -c -fPIC $(CFLAGS) $(INCLUDE_DIR) src/SGUI_label.c
 
-clean:
-	rm -f $(BIN_NAME)
-	rm -f *.o
+SGUI_button.o:
+	$(CC) -c -fPIC $(CFLAGS) $(INCLUDE_DIR) src/SGUI_button.c
+
+SGUI_entry.o:
+	$(CC) -c -fPIC $(CFLAGS) $(INCLUDE_DIR) src/SGUI_entry.c
+
+SGUI_sprite.o:
+	$(CC) -c -fPIC $(CFLAGS) $(INCLUDE_DIR) src/SGUI_sprite.c
+
+$(SO_NAME): SGUI_menu.o SGUI_label.o SGUI_button.o SGUI_entry.o SGUI_sprite.o
+	$(CC) -shared -o $@ $^
 
 install:
-	$(CC) src/*.c $(CFLAGS) $(INCLUDE) $(LIBS) -o $(BIN_NAME)
+	cp $(SO_NAME) /usr/lib
+	chmod 0755 /usr/lib/$(SO_NAME)
+	mkdir /usr/include/$(LIB_NAME)
+	cp src/*.h /usr/include/$(LIB_NAME)
+	ldconfig
 
-	cp -f $(BIN_NAME) $(PATH_INSTALL_BIN)
-
-	mkdir -p $(PATH_INSTALL_INCLUDE)
-	cp -r src/*.h $(PATH_INSTALL_INCLUDE)
+clean:
+	rm -f *.o
+	rm -f $(SO_NAME)
 
 uninstall:
-	rm -f $(PATH_INSTALL_BIN)$(BIN_NAME)
-
-	rm -f -r $(PATH_INSTALL_INCLUDE)
+	rm -r -f /usr/include/$(LIB_NAME)
+	rm -f /usr/lib/$(SO_NAME)

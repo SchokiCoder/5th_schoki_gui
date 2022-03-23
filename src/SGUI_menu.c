@@ -17,11 +17,12 @@
 */
 
 #include <SDL_events.h>
-#include "theme.h"
-#include "label.h"
-#include "button.h"
-#include "entry.h"
-#include "menu.h"
+#include <SM_string.h>
+#include "SGUI_theme.h"
+#include "SGUI_label.h"
+#include "SGUI_button.h"
+#include "SGUI_entry.h"
+#include "SGUI_menu.h"
 
 SGUI_Menu SGUI_Menu_new( SDL_Renderer *renderer, TTF_Font *font, const SGUI_Theme *theme )
 {
@@ -31,7 +32,7 @@ SGUI_Menu SGUI_Menu_new( SDL_Renderer *renderer, TTF_Font *font, const SGUI_Them
         .label_count = 0,
         .button_count = 0,
         .entry_count = 0,
-        .focused_entry = 0,
+        .focused_entry = NULL,
         .visible = true,
         .active = true,
         .bg_color = theme->menu_bg_color
@@ -56,7 +57,7 @@ void SGUI_Menu_draw( SGUI_Menu *menu )
 	SDL_RenderFillRect(menu->renderer, &menu->rect);
 
 	// draw labels
-	for (uint8_t i = 0; i < menu->label_count; i++)
+	for (uint_fast8_t i = 0; i < menu->label_count; i++)
 	{
 		if (menu->labels[i]->visible)
 		{
@@ -65,7 +66,7 @@ void SGUI_Menu_draw( SGUI_Menu *menu )
 	}
 
 	// draw buttons
-	for (uint8_t i = 0; i < menu->button_count; i++)
+	for (uint_fast8_t i = 0; i < menu->button_count; i++)
 	{
 		if (menu->buttons[i]->visible)
 		{
@@ -74,7 +75,7 @@ void SGUI_Menu_draw( SGUI_Menu *menu )
 	}
 
 	// draw entries
-	for (uint8_t i = 0; i < menu->entry_count; i++)
+	for (uint_fast8_t i = 0; i < menu->entry_count; i++)
 	{
 		if (menu->entries[i]->visible)
 		{
@@ -101,7 +102,7 @@ void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event )
     	SDL_GetMouseState(&mouse.x, &mouse.y);
 
     	// check buttons
-    	for (uint8_t i = 0; i < menu->button_count; i++)
+    	for (uint_fast8_t i = 0; i < menu->button_count; i++)
     	{
 			// if not visible or not active or no event-function stored, skip
 			if (menu->buttons[i]->visible == false ||
@@ -119,7 +120,7 @@ void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event )
     	}
 
     	// check entries
-		for (uint8_t i = 0; i < menu->entry_count; i++)
+		for (uint_fast8_t i = 0; i < menu->entry_count; i++)
     	{
     		// if not visible or not active, skip
 			if (menu->entries[i]->visible == false ||
@@ -130,7 +131,7 @@ void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event )
 			if (SDL_PointInRect(&mouse, &menu->entries[i]->rect))
 			{
                 // mark entry as focused, stop
-                menu->focused_entry = i;
+                menu->focused_entry = menu->entries[i];
                 return;
 			}
     	}
@@ -139,8 +140,8 @@ void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event )
 	// keyboard
 	case SDL_TEXTINPUT:
 
-        // if focused entry exists
-        if (menu->focused_entry < menu->entry_count)
+        // if menu has a focused entry
+        if (menu->focused_entry != NULL)
         {
         	// add typed character, update sprite
         	SM_String new = {
@@ -149,10 +150,10 @@ void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event )
         		.size = 1
 			};
 
-        	SM_String_append(&menu->entries[menu->focused_entry]->text, &new);
+        	SM_String_append(&menu->focused_entry->text, &new);
         	SGUI_Entry_update_sprite(
-        		menu->entries[menu->focused_entry],
-        		menu->entries[menu->focused_entry]->text.len - 1);
+        		menu->focused_entry,
+        		menu->focused_entry->text.len - 1);
         }
 		break;
 
@@ -161,8 +162,8 @@ void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event )
 		// backspace
 		if (event->key.keysym.sym == SDLK_BACKSPACE)
 		{
-			menu->entries[menu->focused_entry]->text.str[menu->entries[menu->focused_entry]->text.len - 1] = '\0';
-			menu->entries[menu->focused_entry]->text.len--;
+			menu->focused_entry->text.str[menu->focused_entry->text.len - 1] = '\0';
+			menu->focused_entry->text.len--;
 		}
 
 		break;
@@ -171,19 +172,19 @@ void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event )
 
 void SGUI_Menu_clear( SGUI_Menu *menu )
 {
-    for (uint8_t i = 0; i < menu->label_count; i++)
+    for (uint_fast8_t i = 0; i < menu->label_count; i++)
     {
     	SGUI_Sprite_clear(&menu->labels[i]->sprite);
     	SM_String_clear(&menu->labels[i]->text);
     }
 
-    for (uint8_t i = 0; i < menu->button_count; i++)
+    for (uint_fast8_t i = 0; i < menu->button_count; i++)
     {
     	SGUI_Sprite_clear(&menu->buttons[i]->sprite);
     	SM_String_clear(&menu->buttons[i]->text);
     }
 
-    for (uint8_t i = 0; i < menu->entry_count; i++)
+    for (uint_fast8_t i = 0; i < menu->entry_count; i++)
     {
     	SGUI_Entry_clear_sprites(menu->entries[i]);
     	SM_String_clear(&menu->entries[i]->text);

@@ -16,9 +16,9 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "theme.h"
-#include "menu.h"
-#include "button.h"
+#include "SGUI_theme.h"
+#include "SGUI_menu.h"
+#include "SGUI_button.h"
 
 void SGUI_Button_new( SGUI_Button *button, SGUI_Menu *menu, const SGUI_Theme *theme )
 {

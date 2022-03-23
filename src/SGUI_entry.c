@@ -16,15 +16,15 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "theme.h"
-#include "menu.h"
-#include "entry.h"
+#include "SGUI_theme.h"
+#include "SGUI_menu.h"
+#include "SGUI_entry.h"
 
 void SGUI_Entry_new( SGUI_Entry *entry, SGUI_Menu *menu, const SGUI_Theme *theme )
 {
 	entry->menu = menu;
 
-	for (uint8_t i = 0; i < SGUI_ENTRY_MAX_SHOWN_TEXT; i++)
+	for (uint_fast8_t i = 0; i < SGUI_ENTRY_MAX_SHOWN_TEXT; i++)
 		entry->sprites[i] = SGUI_Sprite_new();
 
 	entry->text = SM_String_new(SGUI_ENTRY_TEXT_INIT_SIZE);
@@ -41,6 +41,10 @@ void SGUI_Entry_new( SGUI_Entry *entry, SGUI_Menu *menu, const SGUI_Theme *theme
 
 void SGUI_Entry_update_sprite( SGUI_Entry *entry, size_t pos )
 {
+	// stop if sprite doesn't exist
+	if (pos > (SGUI_ENTRY_MAX_SHOWN_TEXT - 1))
+		return;
+
 	char letter[2] = {
 		[0] = entry->text.str[pos],
 		[1] = '\0'
@@ -122,7 +126,6 @@ void SGUI_Entry_draw( SGUI_Entry *entry )
 		SDL_RenderFillRect(entry->menu->renderer, &entry->rect);
 	}
 }
-
 
 void SGUI_Entry_clear_sprites( SGUI_Entry *entry )
 {

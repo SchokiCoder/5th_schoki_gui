@@ -40,27 +40,27 @@ typedef struct SGUI_Menu
 	bool visible;
 	bool active;
 
-	uint8_t label_count;
+	uint_fast8_t label_count;
 	SGUI_Label *labels[SGUI_MENU_MAX_WIDGETS];
 
-	uint8_t button_count;
+	uint_fast8_t button_count;
 	SGUI_Button *buttons[SGUI_MENU_MAX_WIDGETS];
 
-	uint8_t focused_entry;
-	uint8_t entry_count;
+	uint_fast8_t entry_count;
 	SGUI_Entry *entries[SGUI_MENU_MAX_WIDGETS];
+	SGUI_Entry *focused_entry;
 
 	SDL_Rect rect;
 
 	SDL_Color bg_color;
 } SGUI_Menu ;
 
-SGUI_Menu SGUI_Menu_new( SDL_Renderer*, TTF_Font*, const SGUI_Theme* );
+SGUI_Menu SGUI_Menu_new( SDL_Renderer *renderer, TTF_Font *font, const SGUI_Theme *theme );
 
-void SGUI_Menu_draw( SGUI_Menu* );
+void SGUI_Menu_draw( SGUI_Menu *menu );
 
-void SGUI_Menu_handle_events( SGUI_Menu*, SDL_Event* );
+void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event );
 
-void SGUI_Menu_clear( SGUI_Menu* );
+void SGUI_Menu_clear( SGUI_Menu *menu );
 
 #endif /* SGUI_MENU_H */

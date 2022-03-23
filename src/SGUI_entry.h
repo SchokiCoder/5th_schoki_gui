@@ -16,35 +16,43 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef SGUI_LABEL_H
-#define SGUI_LABEL_H
+#ifndef SGUI_ENTRY_H
+#define SGUI_ENTRY_H
 
+#include <stdbool.h>
 #include <stdint.h>
-#include <SM/string.h>
-#include "sprite.h"
+#include <SM_string.h>
+#include "SGUI_sprite.h"
 
 typedef struct SGUI_Theme SGUI_Theme;
 typedef struct SGUI_Menu SGUI_Menu;
 
-#define SGUI_LABEL_TEXT_INIT_SIZE 32
+#define SGUI_ENTRY_TEXT_INIT_SIZE 32
+#define SGUI_ENTRY_MAX_SHOWN_TEXT 32
 
-typedef struct SGUI_Label
+typedef struct SGUI_Entry
 {
 	SGUI_Menu *menu;
 	bool visible;
+	bool active;
 	SM_String text;
-	SGUI_Sprite sprite;
+	SGUI_Sprite sprites[SGUI_ENTRY_MAX_SHOWN_TEXT];
 
 	SDL_Rect rect;
 	SDL_Color font_color;
 	SDL_Color bg_color;
 	SDL_Color border_color;
-} SGUI_Label ;
+	SDL_Color disabled_color;
+} SGUI_Entry ;
 
-void SGUI_Label_new( SGUI_Label*, SGUI_Menu*, const SGUI_Theme* );
+void SGUI_Entry_new( SGUI_Entry *entry, SGUI_Menu *menu, const SGUI_Theme *theme );
 
-void SGUI_Label_update_sprite( SGUI_Label* );
+void SGUI_Entry_update_sprite( SGUI_Entry *entry, size_t pos );
 
-void SGUI_Label_draw( SGUI_Label* );
+void SGUI_Entry_update_sprites( SGUI_Entry *entry );
 
-#endif /* SGUI_LABEL_H */
+void SGUI_Entry_draw( SGUI_Entry *entry );
+
+void SGUI_Entry_clear_sprites( SGUI_Entry *entry );
+
+#endif /* SGUI_ENTRY_H */

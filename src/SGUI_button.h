@@ -16,29 +16,40 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef SGUI_SPRITE_H
-#define SGUI_SPRITE_H
+#ifndef SGUI_BUTTON_H
+#define SGUI_BUTTON_H
 
 #include <stdint.h>
-#include <stdbool.h>
-#include <SDL.h>
-#include <SDL_ttf.h>
+#include <SM_string.h>
+#include "SGUI_sprite.h"
 
-typedef struct SGUI_Sprite
+typedef struct SGUI_Theme SGUI_Theme;
+typedef struct SGUI_Menu SGUI_Menu;
+
+#define SGUI_BUTTON_TEXT_INIT_SIZE 32
+
+typedef struct SGUI_Button
 {
-	bool invalid;
-	SDL_Surface *surface;
-	SDL_Texture *texture;
-} SGUI_Sprite ;
+	SGUI_Menu *menu;
+	bool visible;
+	bool active;
+	SM_String text;
+	SGUI_Sprite sprite;
 
-SGUI_Sprite SGUI_Sprite_new( void );
+	SDL_Rect rect;
+	SDL_Color font_color;
+	SDL_Color bg_color;
+	SDL_Color border_color;
+	SDL_Color disabled_color;
 
-SGUI_Sprite SGUI_Sprite_from_file( SDL_Renderer*, const char* );
+	void (*func_click) (void*);
+	void *data_click;
+} SGUI_Button ;
 
-SGUI_Sprite SGUI_Sprite_from_text( SDL_Renderer*, const char*, TTF_Font*, SDL_Color);
+void SGUI_Button_new( SGUI_Button *button, SGUI_Menu *menu, const SGUI_Theme *theme );
 
-void SGUI_Sprite_create_texture( SGUI_Sprite*, SDL_Renderer* );
+void SGUI_Button_update_sprite( SGUI_Button *button );
 
-void SGUI_Sprite_clear( SGUI_Sprite* );
+void SGUI_Button_draw( SGUI_Button *button );
 
-#endif /* SGUI_SPRITE_H */
+#endif /* SGUI_BUTTON_H */
