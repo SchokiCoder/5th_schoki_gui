@@ -18,7 +18,6 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-//#include <SM_string.h>
 #include "SGUI_def_themes.h"
 #include "SGUI_menu.h"
 #include "SGUI_label.h"
@@ -27,7 +26,6 @@
 #include "SGUI_sprite.h"
 
 static const SGUI_Theme *TEST_THEME = &SGUI_THEME_DARK;
-
 static const char PATH_FONT[] = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
 static const uint32_t FONT_SIZE = 12;
 
