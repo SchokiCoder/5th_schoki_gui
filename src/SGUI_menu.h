@@ -32,10 +32,14 @@ typedef struct SGUI_Entry SGUI_Entry;
 
 #define SGUI_MENU_MAX_WIDGETS 16 /* per type */
 
+typedef struct SGUI_MenuStyle
+{
+	SDL_Color bg_color;
+} SGUI_MenuStyle ;
+
 typedef struct SGUI_Menu
 {
 	SDL_Renderer *renderer;
-	TTF_Font *font;
 
 	bool visible;
 	bool active;
@@ -51,11 +55,10 @@ typedef struct SGUI_Menu
 	SGUI_Entry *focused_entry;
 
 	SDL_Rect rect;
-
-	SDL_Color bg_color;
+	SGUI_MenuStyle style;
 } SGUI_Menu ;
 
-SGUI_Menu SGUI_Menu_new( SDL_Renderer *renderer, TTF_Font *font, const SGUI_Theme *theme );
+SGUI_Menu SGUI_Menu_new( SDL_Renderer *renderer, const SGUI_MenuStyle style );
 
 void SGUI_Menu_draw( SGUI_Menu *menu );
 

@@ -20,7 +20,7 @@
 #define SGUI_SGUI_H
 
 #define SGUI_API_MAJOR 0
-#define SGUI_API_MINOR 5
-#define SGUI_API_PATCH 1
+#define SGUI_API_MINOR 6
+#define SGUI_API_PATCH 0
 
 #endif /* SGUI_SGUI_H */

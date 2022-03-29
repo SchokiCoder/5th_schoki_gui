@@ -20,20 +20,20 @@
 #include "SGUI_menu.h"
 #include "SGUI_entry.h"
 
-void SGUI_Entry_new( SGUI_Entry *entry, SGUI_Menu *menu, const SGUI_Theme *theme )
+void SGUI_Entry_new( SGUI_Entry *entry, SGUI_Menu *menu, TTF_Font *font, const SGUI_EntryStyle style )
 {
 	entry->menu = menu;
+	entry->font = font;
 
-	for (uint_fast8_t i = 0; i < SGUI_ENTRY_MAX_SHOWN_TEXT; i++)
+	entry->sprites = malloc(SGUI_ENTRY_TEXT_INIT_SIZE * sizeof(SGUI_Sprite));
+
+	for (size_t i = 0; i < SGUI_ENTRY_TEXT_INIT_SIZE; i++)
 		entry->sprites[i] = SGUI_Sprite_new();
 
 	entry->text = SM_String_new(SGUI_ENTRY_TEXT_INIT_SIZE);
 	entry->visible = true;
 	entry->active = true;
-	entry->font_color = theme->entry_font_color;
-	entry->bg_color = theme->entry_bg_color;
-	entry->border_color = theme->entry_border_color;
-	entry->disabled_color = theme->entry_disabled_color;
+	entry->style = style;
 
 	menu->entries[menu->entry_count] = entry;
 	menu->entry_count++;
@@ -42,7 +42,7 @@ void SGUI_Entry_new( SGUI_Entry *entry, SGUI_Menu *menu, const SGUI_Theme *theme
 void SGUI_Entry_update_sprite( SGUI_Entry *entry, size_t pos )
 {
 	// stop if sprite doesn't exist
-	if (pos > (SGUI_ENTRY_MAX_SHOWN_TEXT - 1))
+	if (pos > (entry->text.len - 1))
 		return;
 
 	char letter[2] = {
@@ -57,8 +57,8 @@ void SGUI_Entry_update_sprite( SGUI_Entry *entry, size_t pos )
 	entry->sprites[pos] = SGUI_Sprite_from_text(
 		entry->menu->renderer,
 		letter,
-		entry->menu->font,
-		entry->font_color);
+		entry->font,
+		entry->style.font_color);
 }
 
 void SGUI_Entry_update_sprites( SGUI_Entry *entry )
@@ -69,6 +69,27 @@ void SGUI_Entry_update_sprites( SGUI_Entry *entry )
 	}
 }
 
+void SGUI_Entry_append( SGUI_Entry *entry, SM_String *appendage )
+{
+	size_t old_size = entry->text.size;
+
+	// append
+	SM_String_append(&entry->text, appendage);
+
+	// increase sprite array size
+	if (entry->text.size > old_size)
+	{
+		entry->sprites = realloc(entry->sprites, old_size * 2 * sizeof(SGUI_Sprite));
+
+		for (size_t i = old_size; i < entry->text.size; i++)
+            entry->sprites[i] = SGUI_Sprite_new();
+	}
+
+	// update new sprites
+	for (size_t i = entry->text.len - appendage->len; i < entry->text.len; i++)
+    	SGUI_Entry_update_sprite(entry, i);
+}
+
 void SGUI_Entry_draw( SGUI_Entry *entry )
 {
 	SDL_Rect draw_target;
@@ -77,19 +98,19 @@ void SGUI_Entry_draw( SGUI_Entry *entry )
 	// draw bg
 	SDL_SetRenderDrawColor(
 		entry->menu->renderer,
-		entry->bg_color.r,
-		entry->bg_color.g,
-		entry->bg_color.b,
-		entry->bg_color.a);
+		entry->style.bg_color.r,
+		entry->style.bg_color.g,
+		entry->style.bg_color.b,
+		entry->style.bg_color.a);
 	SDL_RenderFillRect(entry->menu->renderer, &entry->rect);
 
 	// draw border
 	SDL_SetRenderDrawColor(
 		entry->menu->renderer,
-		entry->border_color.r,
-		entry->border_color.g,
-		entry->border_color.b,
-		entry->border_color.a);
+		entry->style.border_color.r,
+		entry->style.border_color.g,
+		entry->style.border_color.b,
+		entry->style.border_color.a);
 	SDL_RenderDrawRect(entry->menu->renderer, &entry->rect);
 
 	// draw text
@@ -119,10 +140,10 @@ void SGUI_Entry_draw( SGUI_Entry *entry )
 	{
 		SDL_SetRenderDrawColor(
 			entry->menu->renderer,
-			entry->disabled_color.r,
-			entry->disabled_color.g,
-			entry->disabled_color.b,
-			entry->disabled_color.a);
+			entry->style.disabled_color.r,
+			entry->style.disabled_color.g,
+			entry->style.disabled_color.b,
+			entry->style.disabled_color.a);
 		SDL_RenderFillRect(entry->menu->renderer, &entry->rect);
 	}
 }
@@ -133,4 +154,6 @@ void SGUI_Entry_clear_sprites( SGUI_Entry *entry )
 	{
 		SGUI_Sprite_clear(&entry->sprites[i]);
 	}
+
+	free(entry->sprites);
 }

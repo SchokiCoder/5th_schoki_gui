@@ -60,7 +60,7 @@ static const int32_t ENTRY0_H = FONT_SIZE;
 
 static const int32_t ENTRY1_X = 10 + FONT_SIZE * 16 + 10;
 static const int32_t ENTRY1_Y = 70;
-static const int32_t ENTRY1_W = FONT_SIZE * 16;
+static const int32_t ENTRY1_W = FONT_SIZE * 28;
 static const int32_t ENTRY1_H = FONT_SIZE;
 
 struct Button0Data
@@ -136,7 +136,7 @@ int main( void )
 	}
 
 	// make standalone sprite
-	sprite = SGUI_Sprite_from_text(renderer, SPRITE_TEXT, font, SGUI_THEME_DARK.label_font_color);
+	sprite = SGUI_Sprite_from_text(renderer, SPRITE_TEXT, font, SGUI_THEME_DARK.label.font_color);
 
 	rect_sprite.x = SPRITE_X;
     rect_sprite.y = SPRITE_Y;
@@ -144,12 +144,12 @@ int main( void )
 	rect_sprite.h = sprite.surface->h;
 
 	// make menu
-	menu = SGUI_Menu_new(renderer, font, TEST_THEME);
-	SGUI_Label_new(&label, &menu, TEST_THEME);
-	SGUI_Button_new(&button0, &menu, TEST_THEME);
-	SGUI_Button_new(&button1, &menu, TEST_THEME);
-	SGUI_Entry_new(&entry0, &menu, TEST_THEME);
-	SGUI_Entry_new(&entry1, &menu, TEST_THEME);
+	menu = SGUI_Menu_new(renderer, TEST_THEME->menu);
+	SGUI_Label_new(&label, &menu, font, TEST_THEME->label);
+	SGUI_Button_new(&button0, &menu, font, TEST_THEME->button);
+	SGUI_Button_new(&button1, &menu, font, TEST_THEME->button);
+	SGUI_Entry_new(&entry0, &menu, font, TEST_THEME->entry);
+	SGUI_Entry_new(&entry1, &menu, font, TEST_THEME->entry);
 
 	// make widget text sprites
 	temp = SM_String_contain(LABEL_TEXT);

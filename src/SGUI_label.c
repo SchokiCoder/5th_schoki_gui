@@ -20,15 +20,14 @@
 #include "SGUI_menu.h"
 #include "SGUI_label.h"
 
-void SGUI_Label_new( SGUI_Label *label, SGUI_Menu *menu, const SGUI_Theme *theme )
+void SGUI_Label_new( SGUI_Label *label, SGUI_Menu *menu, TTF_Font *font, const SGUI_LabelStyle style )
 {
 	label->menu = menu;
+	label->font = font;
 	label->text = SM_String_new(SGUI_LABEL_TEXT_INIT_SIZE);
 	label->sprite = SGUI_Sprite_new();
 	label->visible = true;
-	label->font_color = theme->label_font_color;
-	label->bg_color = theme->label_bg_color;
-	label->border_color = theme->label_border_color;
+	label->style = style;
 
 	menu->labels[menu->label_count] = label;
 	menu->label_count++;
@@ -40,8 +39,8 @@ void SGUI_Label_update_sprite( SGUI_Label *label )
 	label->sprite = SGUI_Sprite_from_text(
 		label->menu->renderer,
 		label->text.str,
-		label->menu->font,
-		label->font_color);
+		label->font,
+		label->style.font_color);
 }
 
 void SGUI_Label_draw( SGUI_Label *label )
@@ -49,19 +48,19 @@ void SGUI_Label_draw( SGUI_Label *label )
 	// draw bg
 	SDL_SetRenderDrawColor(
 		label->menu->renderer,
-		label->bg_color.r,
-		label->bg_color.g,
-		label->bg_color.b,
-		label->bg_color.a);
+		label->style.bg_color.r,
+		label->style.bg_color.g,
+		label->style.bg_color.b,
+		label->style.bg_color.a);
 	SDL_RenderFillRect(label->menu->renderer, &label->rect);
 
 	// draw border
 	SDL_SetRenderDrawColor(
 		label->menu->renderer,
-		label->border_color.r,
-		label->border_color.g,
-		label->border_color.b,
-		label->border_color.a);
+		label->style.border_color.r,
+		label->style.border_color.g,
+		label->style.border_color.b,
+		label->style.border_color.a);
 	SDL_RenderDrawRect(label->menu->renderer, &label->rect);
 
 	// draw text

@@ -32,18 +32,22 @@ static const uint32_t FONT_SIZE = 12;
 static const uint32_t WINDOW_W = 640;
 static const uint32_t WINDOW_H = 480;
 
-static const SDL_Color MENU1_BG = {
-	.r = 10,
-	.g = 55,
-	.b = 10,
-	.a = 255
+static const SGUI_MenuStyle MENU1_STYLE = {
+	.bg_color = {
+		.r = 10,
+		.g = 55,
+		.b = 10,
+		.a = 255
+	}
 };
 
-static const SDL_Color MENU2_BG = {
-	.r = 10,
-	.g = 10,
-	.b = 55,
-	.a = 255
+static const SGUI_MenuStyle MENU2_STYLE = {
+	.bg_color = {
+		.r = 10,
+		.g = 10,
+		.b = 55,
+		.a = 255
+	}
 };
 
 static const SDL_Rect MENU1_RECT = {
@@ -199,19 +203,19 @@ int main()
 	}
 
 	// create menus
-	menu1 = SGUI_Menu_new(renderer, font, TEST_THEME);
-	SGUI_Label_new(&label1, &menu1, TEST_THEME);
-	SGUI_Button_new(&btn_goto1, &menu1, TEST_THEME);
-	SGUI_Button_new(&btn_print1, &menu1, TEST_THEME);
+	menu1 = SGUI_Menu_new(renderer, TEST_THEME->menu);
+	SGUI_Label_new(&label1, &menu1, font, TEST_THEME->label);
+	SGUI_Button_new(&btn_goto1, &menu1, font, TEST_THEME->button);
+	SGUI_Button_new(&btn_print1, &menu1, font, TEST_THEME->button);
 
-	menu2 = SGUI_Menu_new(renderer, font, TEST_THEME);
-	SGUI_Label_new(&label2, &menu2, TEST_THEME);
-	SGUI_Button_new(&btn_goto2, &menu2, TEST_THEME);
-	SGUI_Button_new(&btn_print2, &menu2, TEST_THEME);
+	menu2 = SGUI_Menu_new(renderer, TEST_THEME->menu);
+	SGUI_Label_new(&label2, &menu2, font, TEST_THEME->label);
+	SGUI_Button_new(&btn_goto2, &menu2, font, TEST_THEME->button);
+	SGUI_Button_new(&btn_print2, &menu2, font, TEST_THEME->button);
 
 	// define menus
 	menu1.rect = MENU1_RECT;
-	menu1.bg_color = MENU1_BG;
+	menu1.style = MENU1_STYLE;
 
 	temp = SM_String_contain(LABEL1_TEXT);
 	SM_String_copy(&label1.text, &temp);
@@ -232,7 +236,7 @@ int main()
 	btn_print1.rect.w = btn_print1.sprite.surface->w;
 
 	menu2.rect = MENU2_RECT;
-	menu2.bg_color = MENU2_BG;
+	menu2.style = MENU2_STYLE;
 	menu2.visible = false;
 
 	temp = SM_String_contain(LABEL2_TEXT);

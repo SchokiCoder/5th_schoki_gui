@@ -20,24 +20,17 @@
 #define SGUI_THEME_H
 
 #include <SDL_pixels.h>
+#include "SGUI_menu.h"
+#include "SGUI_label.h"
+#include "SGUI_button.h"
+#include "SGUI_entry.h"
 
 typedef struct SGUI_Theme
 {
-    SDL_Color menu_bg_color;
-
-    SDL_Color label_font_color;
-    SDL_Color label_bg_color;
-    SDL_Color label_border_color;
-
-    SDL_Color button_font_color;
-    SDL_Color button_bg_color;
-    SDL_Color button_border_color;
-    SDL_Color button_disabled_color;
-
-    SDL_Color entry_font_color;
-    SDL_Color entry_bg_color;
-    SDL_Color entry_border_color;
-    SDL_Color entry_disabled_color;
+    SGUI_MenuStyle menu;
+    SGUI_LabelStyle label;
+	SGUI_ButtonStyle button;
+	SGUI_EntryStyle entry;
 } SGUI_Theme ;
 
 #endif /* SGUI_THEME_H */

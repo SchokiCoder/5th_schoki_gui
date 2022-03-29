@@ -24,18 +24,17 @@
 #include "SGUI_entry.h"
 #include "SGUI_menu.h"
 
-SGUI_Menu SGUI_Menu_new( SDL_Renderer *renderer, TTF_Font *font, const SGUI_Theme *theme )
+SGUI_Menu SGUI_Menu_new( SDL_Renderer *renderer, const SGUI_MenuStyle style )
 {
     SGUI_Menu result = {
 		.renderer = renderer,
-		.font = font,
         .label_count = 0,
         .button_count = 0,
         .entry_count = 0,
         .focused_entry = NULL,
         .visible = true,
         .active = true,
-        .bg_color = theme->menu_bg_color
+        .style = style
     };
 
     return result;
@@ -50,10 +49,10 @@ void SGUI_Menu_draw( SGUI_Menu *menu )
 	// draw bg
 	SDL_SetRenderDrawColor(
 		menu->renderer,
-		menu->bg_color.r,
-		menu->bg_color.g,
-		menu->bg_color.b,
-		menu->bg_color.a);
+		menu->style.bg_color.r,
+		menu->style.bg_color.g,
+		menu->style.bg_color.b,
+		menu->style.bg_color.a);
 	SDL_RenderFillRect(menu->renderer, &menu->rect);
 
 	// draw labels
@@ -143,27 +142,26 @@ void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event )
         // if menu has a focused entry
         if (menu->focused_entry != NULL)
         {
-        	// add typed character, update sprite
-        	SM_String new = {
-        		.str = event->text.text,
-        		.len = 1,
-        		.size = 1
-			};
-
-        	SM_String_append(&menu->focused_entry->text, &new);
-        	SGUI_Entry_update_sprite(
-        		menu->focused_entry,
-        		menu->focused_entry->text.len - 1);
+        	// add new characters
+        	SM_String new = SM_String_contain(event->text.text);
+        	SGUI_Entry_append(menu->focused_entry, &new);
         }
 		break;
 
 	case SDL_KEYDOWN:
 
-		// backspace
-		if (event->key.keysym.sym == SDLK_BACKSPACE)
+		// if menu has a focused entry
+		if (menu->focused_entry != NULL)
 		{
-			menu->focused_entry->text.str[menu->focused_entry->text.len - 1] = '\0';
-			menu->focused_entry->text.len--;
+			// backspace
+			if (event->key.keysym.sym == SDLK_BACKSPACE)
+			{
+				if (menu->focused_entry->text.len > 0)
+				{
+					menu->focused_entry->text.str[menu->focused_entry->text.len - 1] = '\0';
+					menu->focused_entry->text.len--;
+				}
+			}
 		}
 
 		break;
