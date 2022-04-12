@@ -62,7 +62,7 @@ SGUI_Menu SGUI_Menu_new( SDL_Renderer *renderer, const SGUI_MenuStyle style );
 
 void SGUI_Menu_draw( SGUI_Menu *menu );
 
-void SGUI_Menu_handle_events( SGUI_Menu *menu, SDL_Event *event );
+void SGUI_Menu_handle_event( SGUI_Menu *menu, SDL_Event *event );
 
 void SGUI_Menu_clear( SGUI_Menu *menu );
 

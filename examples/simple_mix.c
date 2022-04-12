@@ -93,7 +93,6 @@ int main( void )
 	SGUI_Menu menu;
 	SGUI_Sprite sprite = {.invalid = false};
 	SDL_Rect rect_sprite;
-	SM_String temp;
 	SGUI_Label label;
 	SGUI_Button button0;
 	SGUI_Button button1;
@@ -152,24 +151,19 @@ int main( void )
 	SGUI_Entry_new(&entry1, &menu, font, TEST_THEME->entry);
 
 	// make widget text sprites
-	temp = SM_String_contain(LABEL_TEXT);
-	SM_String_copy(&label.text, &temp);
+	SM_String_copy_cstr(&label.text, LABEL_TEXT);
 	SGUI_Label_update_sprite(&label);
 
-	temp = SM_String_contain(BUTTON0_TEXT);
-	SM_String_copy(&button0.text, &temp);
+	SM_String_copy_cstr(&button0.text, BUTTON0_TEXT);
 	SGUI_Button_update_sprite(&button0);
 
-	temp = SM_String_contain(BUTTON1_TEXT);
-	SM_String_copy(&button1.text, &temp);
+	SM_String_copy_cstr(&button1.text, BUTTON1_TEXT);
 	SGUI_Button_update_sprite(&button1);
 
-	temp = SM_String_contain(ENTRY0_TEXT);
-	SM_String_copy(&entry0.text, &temp);
+	SM_String_copy_cstr(&entry0.text, ENTRY0_TEXT);
 	SGUI_Entry_update_sprites(&entry0);
 
-	temp = SM_String_contain(ENTRY1_TEXT);
-	SM_String_copy(&entry1.text, &temp);
+	SM_String_copy_cstr(&entry1.text, ENTRY1_TEXT);
 	SGUI_Entry_update_sprites(&entry1);
 
 	// set widget positions
@@ -219,7 +213,7 @@ int main( void )
 		while (SDL_PollEvent(&event))
 		{
 			// menu events
-			SGUI_Menu_handle_events(&menu, &event);
+			SGUI_Menu_handle_event(&menu, &event);
 
 			// app events
 			switch (event.type)

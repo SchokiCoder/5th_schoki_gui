@@ -147,7 +147,6 @@ void btn_print2_click()
 int main()
 {
 	bool active = true;
-	SM_String temp;
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 	TTF_Font *font;
@@ -217,20 +216,17 @@ int main()
 	menu1.rect = MENU1_RECT;
 	menu1.style = MENU1_STYLE;
 
-	temp = SM_String_contain(LABEL1_TEXT);
-	SM_String_copy(&label1.text, &temp);
+	SM_String_copy_cstr(&label1.text, LABEL1_TEXT);
 	SGUI_Label_update_sprite(&label1);
 	label1.rect = LABEL1_RECT;
 	label1.rect.w = label1.sprite.surface->w;
 
-	temp = SM_String_contain(BTN_GOTO1_TEXT);
-	SM_String_copy(&btn_goto1.text, &temp);
+	SM_String_copy_cstr(&btn_goto1.text, BTN_GOTO1_TEXT);
 	SGUI_Button_update_sprite(&btn_goto1);
 	btn_goto1.rect = BTN_GOTO1_RECT;
 	btn_goto1.rect.w = btn_goto1.sprite.surface->w;
 
-	temp = SM_String_contain(BTN_PRINT1_TEXT);
-	SM_String_copy(&btn_print1.text, &temp);
+	SM_String_copy_cstr(&btn_print1.text, BTN_PRINT1_TEXT);
 	SGUI_Button_update_sprite(&btn_print1);
 	btn_print1.rect = BTN_PRINT1_RECT;
 	btn_print1.rect.w = btn_print1.sprite.surface->w;
@@ -239,20 +235,17 @@ int main()
 	menu2.style = MENU2_STYLE;
 	menu2.visible = false;
 
-	temp = SM_String_contain(LABEL2_TEXT);
-	SM_String_copy(&label2.text, &temp);
+	SM_String_copy_cstr(&label2.text, LABEL2_TEXT);
 	SGUI_Label_update_sprite(&label2);
 	label2.rect = LABEL2_RECT;
 	label2.rect.w = label2.sprite.surface->w;
 
-	temp = SM_String_contain(BTN_GOTO2_TEXT);
-	SM_String_copy(&btn_goto2.text, &temp);
+	SM_String_copy_cstr(&btn_goto2.text, BTN_GOTO2_TEXT);
 	SGUI_Button_update_sprite(&btn_goto2);
 	btn_goto2.rect = BTN_GOTO2_RECT;
 	btn_goto2.rect.w = btn_goto2.sprite.surface->w;
 
-	temp = SM_String_contain(BTN_PRINT2_TEXT);
-	SM_String_copy(&btn_print2.text, &temp);
+	SM_String_copy_cstr(&btn_print2.text, BTN_PRINT2_TEXT);
 	SGUI_Button_update_sprite(&btn_print2);
 	btn_print2.rect = BTN_PRINT2_RECT;
 	btn_print2.rect.w = btn_print2.sprite.surface->w;
@@ -274,9 +267,9 @@ int main()
 		{
 			// menu events
 			if (menu1.visible)
-				SGUI_Menu_handle_events(&menu1, &event);
+				SGUI_Menu_handle_event(&menu1, &event);
 			else
-				SGUI_Menu_handle_events(&menu2, &event);
+				SGUI_Menu_handle_event(&menu2, &event);
 
 			// app events
 			switch (event.type)
