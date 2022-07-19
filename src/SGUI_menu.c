@@ -169,70 +169,144 @@ void SGUI_Menu_handle_event( SGUI_Menu *menu, SDL_Event *event )
 }
 
 void SGUI_Menu_grid( SGUI_Menu *menu )
-{
+{	
+	typedef enum WidgetType
+	{
+		WT_None,
+		WT_Label,
+		WT_Button,
+		WT_Entry,
+	} WidgetType ;
+
+	typedef union WidgetPointer
+	{
+		SGUI_Label *label;
+		SGUI_Button *button;
+		SGUI_Entry *entry;
+	} WidgetPointer ;
+
+	typedef struct WidgetReference
+	{
+		WidgetType type;
+		WidgetPointer ptr;
+	} WidgetReference ;
+	
 	typedef struct CellData
 	{
-		SGUI_WidgetId wid;
+		WidgetReference wref;
 		u32 width;
 		u32 height;
 	} CellData ;
 	
-	CellData table[256][256] = {};
-	u32 table_w[256];
-	u32 table_h[256];
+	const usize TABLE_W = 256;
+	const usize TABLE_H = 256;
 	
-	// get widgets in each cell
+	CellData table[TABLE_W][TABLE_H];
+	u32 colwidth[TABLE_W];
+	u32 rowheight[TABLE_H];
+	
+	// init table
+	for (usize x = 0; x < TABLE_W; x++)
+	{
+		for (usize y = 0; y < TABLE_H; y++)
+		{
+			table[x][y].wref.type = WT_None;
+			table[x][y].wref.ptr.label = NULL;
+			table[x][y].width = 0;
+			table[x][y].height = 0;
+		}
+	}
+	
+	// assign widgets to cells
+	SDL_Point tblpt;
+	
 	for (u8 i = 0; i < menu->label_count; i++)
     {
-		table[menu->labels[i]->rect.x][menu->labels[i]->rect.y].wid.i = i;
-		table[menu->labels[i]->rect.x][menu->labels[i]->rect.y].wid.type = WT_Label;
-		table[menu->labels[i]->rect.x][menu->labels[i]->rect.y].width = menu->labels[i]->rect.w;
-		table[menu->labels[i]->rect.x][menu->labels[i]->rect.y].height = menu->labels[i]->rect.h;
+		tblpt.x = menu->labels[i]->rect.x;
+		tblpt.y = menu->labels[i]->rect.y;
+		
+		table[tblpt.x][tblpt.y].wref.type = WT_Label;
+		table[tblpt.x][tblpt.y].wref.ptr.label = menu->labels[i];
+		table[tblpt.x][tblpt.y].width = menu->labels[i]->rect.w;
+		table[tblpt.x][tblpt.y].height = menu->labels[i]->rect.h;
     }
 
     for (u8 i = 0; i < menu->button_count; i++)
     {
-		table[menu->buttons[i]->rect.x][menu->buttons[i]->rect.y].wid.i = i;
-		table[menu->buttons[i]->rect.x][menu->buttons[i]->rect.y].wid.type = WT_Button;
-		table[menu->buttons[i]->rect.x][menu->buttons[i]->rect.y].width = menu->buttons[i]->rect.w;
-		table[menu->buttons[i]->rect.x][menu->buttons[i]->rect.y].height = menu->buttons[i]->rect.h;
+		tblpt.x = menu->buttons[i]->rect.x;
+		tblpt.y = menu->buttons[i]->rect.y;
+		
+		table[tblpt.x][tblpt.y].wref.type = WT_Button;
+		table[tblpt.x][tblpt.y].wref.ptr.button = menu->buttons[i];
+		table[tblpt.x][tblpt.y].width = menu->buttons[i]->rect.w;
+		table[tblpt.x][tblpt.y].height = menu->buttons[i]->rect.h;
     }
 
     for (u8 i = 0; i < menu->entry_count; i++)
     {
-		table[menu->entries[i]->rect.x][menu->entries[i]->rect.y].wid.i = i;
-		table[menu->entries[i]->rect.x][menu->entries[i]->rect.y].wid.type = WT_Entry;
-		table[menu->entries[i]->rect.x][menu->entries[i]->rect.y].width = menu->entries[i]->rect.w;
-		table[menu->entries[i]->rect.x][menu->entries[i]->rect.y].height = menu->entries[i]->rect.h;
+		tblpt.x = menu->entries[i]->rect.x;
+		tblpt.y = menu->entries[i]->rect.y;
+		
+		table[tblpt.x][tblpt.y].wref.type = WT_Entry;
+		table[tblpt.x][tblpt.y].wref.ptr.entry = menu->entries[i];
+		table[tblpt.x][tblpt.y].width = menu->entries[i]->rect.w;
+		table[tblpt.x][tblpt.y].height = menu->entries[i]->rect.h;
     }
 
 	// get col width, row height
-	for (u8 x = 0; x < 254; x++)
+	for (usize x = 0; x < TABLE_W; x++)
 	{
-		for (u8 y = 0; y < 254; y++)
+		for (usize y = 0; y < TABLE_H; y++)
 		{
-			// if cell has content, skip
-			if (table[x][y].wid.type == WT_None)
+			// if cell has no content, skip
+			if (table[x][y].wref.type == WT_None)
 				continue;
 			
-			// if cell to the right has no content, increase width if needed
-			if (table[x + 1][y].wid.type == WT_None)
-			{
-				if (table[x][y].width > table_w[x])
-					table_w[x] = table[x][y].width;
-			}
+			// if needed, increase size
+			if (table[x][y].width > colwidth[x])
+				colwidth[x] = table[x][y].width;
 			
-			// if cell below has no content, icrease height if needed
-			if (table[x][y + 1].wid.type == WT_None)
-			{
-				if (table[x][y].height > table_h[y])
-					table_h[y] = table[x][y].height;
-			}
+			if (table[x][y].height > rowheight[y])
+				rowheight[y] = table[x][y].height;
 		}
 	}
 	
 	// change pos of widgets
-	#warning impl me
+	u32 pos_x = 0;
+	u32 pos_y = 0;
+	
+	for (usize x = 0; x < TABLE_W; x++)
+	{
+		for (usize y = 0; y < TABLE_H; y++)
+		{
+			switch (table[x][y].wref.type)
+			{
+				case WT_Label:
+					table[x][y].wref.ptr.label->rect.x = pos_x;
+					table[x][y].wref.ptr.label->rect.y = pos_y;
+					break;
+					
+				case WT_Button:
+					table[x][y].wref.ptr.button->rect.x = pos_x;
+					table[x][y].wref.ptr.button->rect.y = pos_y;
+					break;
+				
+				case WT_Entry:
+					table[x][y].wref.ptr.entry->rect.x = pos_x;
+					table[x][y].wref.ptr.entry->rect.y = pos_y;
+					break;
+				
+				case WT_None:
+				default:
+					break;
+			}
+			
+			pos_y += rowheight[y];
+		}
+		
+		pos_y = 0;
+		pos_x += colwidth[x];
+	}
 }
 
 void SGUI_Menu_clear( SGUI_Menu *menu )

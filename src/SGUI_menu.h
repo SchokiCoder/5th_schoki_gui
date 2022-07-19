@@ -30,20 +30,6 @@ typedef struct SGUI_Label SGUI_Label;
 typedef struct SGUI_Button SGUI_Button;
 typedef struct SGUI_Entry SGUI_Entry;
 
-typedef enum SGUI_WidgetType
-{
-	WT_None,
-	WT_Label,
-	WT_Button,
-	WT_Entry,
-} SGUI_WidgetType ;
-
-typedef struct SGUI_WidgetId
-{
-	SGUI_WidgetType type;
-	u8 i;
-} SGUI_WidgetId ;
-
 #define SGUI_MENU_MAX_WIDGETS 16 /* per type */
 
 typedef struct SGUI_MenuStyle
