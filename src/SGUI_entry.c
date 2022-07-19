@@ -93,7 +93,7 @@ void SGUI_Entry_append( SGUI_Entry *entry, SM_String *appendage )
 void SGUI_Entry_draw( SGUI_Entry *entry )
 {
 	SDL_Rect draw_target;
-    uint32_t text_width = 0;
+    u32 text_width = 0;
 
 	// draw bg
 	SDL_SetRenderDrawColor(
@@ -117,7 +117,7 @@ void SGUI_Entry_draw( SGUI_Entry *entry )
 	for (size_t i = 0; i < entry->text.len; i++)
 	{
 		// if text exceeds entry width, stop
-		if (text_width > (uint32_t) entry->rect.w)
+		if (text_width > (u32) entry->rect.w)
 			break;
 
 		// draw
@@ -156,4 +156,15 @@ void SGUI_Entry_clear_sprites( SGUI_Entry *entry )
 	}
 
 	free(entry->sprites);
+}
+
+void SGUI_Entry_resize( SGUI_Entry *entry )
+{
+	entry->rect.h = entry->sprites[0].surface->h;
+	entry->rect.w = 0;
+
+	for (usize i = 0; i < entry->text.len; i++)
+	{
+		entry->rect.w += entry->sprites[i].surface->w;
+	}
 }

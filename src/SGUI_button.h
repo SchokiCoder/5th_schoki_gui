@@ -19,7 +19,7 @@
 #ifndef SGUI_BUTTON_H
 #define SGUI_BUTTON_H
 
-#include <stdint.h>
+#include <SM_types.h>
 #include <SM_string.h>
 #include "SGUI_sprite.h"
 
@@ -57,5 +57,7 @@ void SGUI_Button_new( SGUI_Button *button, SGUI_Menu *menu, TTF_Font *font, cons
 void SGUI_Button_update_sprite( SGUI_Button *button );
 
 void SGUI_Button_draw( SGUI_Button *button );
+
+void SGUI_Button_resize( SGUI_Button *button );
 
 #endif /* SGUI_BUTTON_H */

@@ -20,7 +20,11 @@
 #include "SGUI_menu.h"
 #include "SGUI_label.h"
 
-void SGUI_Label_new( SGUI_Label *label, SGUI_Menu *menu, TTF_Font *font, const SGUI_LabelStyle style )
+void SGUI_Label_new(
+	SGUI_Label *label,
+	SGUI_Menu *menu,
+	TTF_Font *font,
+	const SGUI_LabelStyle style )
 {
 	label->menu = menu;
 	label->font = font;
@@ -69,4 +73,10 @@ void SGUI_Label_draw( SGUI_Label *label )
 		label->sprite.texture,
 		NULL,
 		&label->rect);
+}
+
+void SGUI_Label_resize( SGUI_Label *label )
+{
+	label->rect.w = label->sprite.surface->w;
+	label->rect.h = label->sprite.surface->h;
 }

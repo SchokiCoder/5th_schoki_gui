@@ -1,26 +1,25 @@
 CC=cc
 CFLAGS=-std=c99 -Wall -Wextra -O3
-INCLUDE=-lSDL2 -lSDL2_ttf -lSDL2_image -lschoki_misc
-INCLUDE_DIR=-I/usr/include/SDL2 -I/usr/include/schoki_misc
+INCLUDE=-I /usr/include/SDL2 -I /usr/include/schoki_misc
 LIB_NAME=schoki_gui
 SO_NAME=lib$(LIB_NAME).so
 
 all: $(SO_NAME) install
 
 SGUI_menu.o:
-	$(CC) -c -fPIC $(CFLAGS) $(INCLUDE_DIR) src/SGUI_menu.c
+	$(CC) -c -fPIC $(CFLAGS) $(INCLUDE) src/SGUI_menu.c
 
 SGUI_label.o:
-	$(CC) -c -fPIC $(CFLAGS) $(INCLUDE_DIR) src/SGUI_label.c
+	$(CC) -c -fPIC $(CFLAGS) $(INCLUDE) src/SGUI_label.c
 
 SGUI_button.o:
-	$(CC) -c -fPIC $(CFLAGS) $(INCLUDE_DIR) src/SGUI_button.c
+	$(CC) -c -fPIC $(CFLAGS) $(INCLUDE) src/SGUI_button.c
 
 SGUI_entry.o:
-	$(CC) -c -fPIC $(CFLAGS) $(INCLUDE_DIR) src/SGUI_entry.c
+	$(CC) -c -fPIC $(CFLAGS) $(INCLUDE) src/SGUI_entry.c
 
 SGUI_sprite.o:
-	$(CC) -c -fPIC $(CFLAGS) $(INCLUDE_DIR) src/SGUI_sprite.c
+	$(CC) -c -fPIC $(CFLAGS) $(INCLUDE) src/SGUI_sprite.c
 
 $(SO_NAME): SGUI_menu.o SGUI_label.o SGUI_button.o SGUI_entry.o SGUI_sprite.o
 	$(CC) -shared -o $@ $^
@@ -35,7 +34,26 @@ install:
 clean:
 	rm -f *.o
 	rm -f $(SO_NAME)
+	
+	rm -f every_widget
+	rm -f multiple_menus
+	rm -f grid
 
 uninstall:
 	rm -r -f /usr/include/$(LIB_NAME)
 	rm -f /usr/lib/$(SO_NAME)
+
+EXFLAGS=-std=c99 -Wall -Wextra -g
+EXLIBS=-l schoki_misc -l SDL2 -l SDL2_ttf -l $(LIB_NAME)
+EXINCLUDE=$(INCLUDE) -I /usr/include/$(LIB_NAME)
+
+every_widget:
+	$(CC) examples/$@.c -o $@ $(EXFLAGS) $(EXLIBS) $(EXINCLUDE)
+
+multiple_menus:
+	$(CC) examples/$@.c -o $@ $(EXFLAGS) $(EXLIBS) $(EXINCLUDE)
+
+grid:
+	$(CC) examples/$@.c -o $@ $(EXFLAGS) $(EXLIBS) $(EXINCLUDE)
+
+examples: every_widget multiple_menus grid

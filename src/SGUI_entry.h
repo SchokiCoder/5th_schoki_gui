@@ -20,7 +20,7 @@
 #define SGUI_ENTRY_H
 
 #include <stdbool.h>
-#include <stdint.h>
+#include <SM_types.h>
 #include <SM_string.h>
 #include "SGUI_sprite.h"
 
@@ -61,5 +61,7 @@ void SGUI_Entry_append( SGUI_Entry *entry, SM_String *appendage );
 void SGUI_Entry_draw( SGUI_Entry *entry );
 
 void SGUI_Entry_clear_sprites( SGUI_Entry *entry );
+
+void SGUI_Entry_resize( SGUI_Entry *entry );
 
 #endif /* SGUI_ENTRY_H */

@@ -1,0 +1,7 @@
+{
+	-fix image load missing		v_10-05_19-07-2022
+	-types						v_10-16
+	-autosize					v_10-36
+	-grid						.
+	-v							. -> 0.7.0
+}

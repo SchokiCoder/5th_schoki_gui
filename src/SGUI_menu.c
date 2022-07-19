@@ -56,7 +56,7 @@ void SGUI_Menu_draw( SGUI_Menu *menu )
 	SDL_RenderFillRect(menu->renderer, &menu->rect);
 
 	// draw labels
-	for (uint_fast8_t i = 0; i < menu->label_count; i++)
+	for (u8 i = 0; i < menu->label_count; i++)
 	{
 		if (menu->labels[i]->visible)
 		{
@@ -65,7 +65,7 @@ void SGUI_Menu_draw( SGUI_Menu *menu )
 	}
 
 	// draw buttons
-	for (uint_fast8_t i = 0; i < menu->button_count; i++)
+	for (u8 i = 0; i < menu->button_count; i++)
 	{
 		if (menu->buttons[i]->visible)
 		{
@@ -74,7 +74,7 @@ void SGUI_Menu_draw( SGUI_Menu *menu )
 	}
 
 	// draw entries
-	for (uint_fast8_t i = 0; i < menu->entry_count; i++)
+	for (u8 i = 0; i < menu->entry_count; i++)
 	{
 		if (menu->entries[i]->visible)
 		{
@@ -101,7 +101,7 @@ void SGUI_Menu_handle_event( SGUI_Menu *menu, SDL_Event *event )
     	SDL_GetMouseState(&mouse.x, &mouse.y);
 
     	// check buttons
-    	for (uint_fast8_t i = 0; i < menu->button_count; i++)
+    	for (u8 i = 0; i < menu->button_count; i++)
     	{
 			// if not visible or not active or no event-function stored, skip
 			if (menu->buttons[i]->visible == false ||
@@ -119,7 +119,7 @@ void SGUI_Menu_handle_event( SGUI_Menu *menu, SDL_Event *event )
     	}
 
     	// check entries
-		for (uint_fast8_t i = 0; i < menu->entry_count; i++)
+		for (u8 i = 0; i < menu->entry_count; i++)
     	{
     		// if not visible or not active, skip
 			if (menu->entries[i]->visible == false ||
@@ -168,21 +168,88 @@ void SGUI_Menu_handle_event( SGUI_Menu *menu, SDL_Event *event )
 	}
 }
 
+void SGUI_Menu_grid( SGUI_Menu *menu )
+{
+	typedef struct CellData
+	{
+		SGUI_WidgetId wid;
+		u32 width;
+		u32 height;
+	} CellData ;
+	
+	CellData table[256][256] = {};
+	u32 table_w[256];
+	u32 table_h[256];
+	
+	// get widgets in each cell
+	for (u8 i = 0; i < menu->label_count; i++)
+    {
+		table[menu->labels[i]->rect.x][menu->labels[i]->rect.y].wid.i = i;
+		table[menu->labels[i]->rect.x][menu->labels[i]->rect.y].wid.type = WT_Label;
+		table[menu->labels[i]->rect.x][menu->labels[i]->rect.y].width = menu->labels[i]->rect.w;
+		table[menu->labels[i]->rect.x][menu->labels[i]->rect.y].height = menu->labels[i]->rect.h;
+    }
+
+    for (u8 i = 0; i < menu->button_count; i++)
+    {
+		table[menu->buttons[i]->rect.x][menu->buttons[i]->rect.y].wid.i = i;
+		table[menu->buttons[i]->rect.x][menu->buttons[i]->rect.y].wid.type = WT_Button;
+		table[menu->buttons[i]->rect.x][menu->buttons[i]->rect.y].width = menu->buttons[i]->rect.w;
+		table[menu->buttons[i]->rect.x][menu->buttons[i]->rect.y].height = menu->buttons[i]->rect.h;
+    }
+
+    for (u8 i = 0; i < menu->entry_count; i++)
+    {
+		table[menu->entries[i]->rect.x][menu->entries[i]->rect.y].wid.i = i;
+		table[menu->entries[i]->rect.x][menu->entries[i]->rect.y].wid.type = WT_Entry;
+		table[menu->entries[i]->rect.x][menu->entries[i]->rect.y].width = menu->entries[i]->rect.w;
+		table[menu->entries[i]->rect.x][menu->entries[i]->rect.y].height = menu->entries[i]->rect.h;
+    }
+
+	// get col width, row height
+	for (u8 x = 0; x < 254; x++)
+	{
+		for (u8 y = 0; y < 254; y++)
+		{
+			// if cell has content, skip
+			if (table[x][y].wid.type == WT_None)
+				continue;
+			
+			// if cell to the right has no content, increase width if needed
+			if (table[x + 1][y].wid.type == WT_None)
+			{
+				if (table[x][y].width > table_w[x])
+					table_w[x] = table[x][y].width;
+			}
+			
+			// if cell below has no content, icrease height if needed
+			if (table[x][y + 1].wid.type == WT_None)
+			{
+				if (table[x][y].height > table_h[y])
+					table_h[y] = table[x][y].height;
+			}
+		}
+	}
+	
+	// change pos of widgets
+	#warning impl me
+}
+
 void SGUI_Menu_clear( SGUI_Menu *menu )
 {
-    for (uint_fast8_t i = 0; i < menu->label_count; i++)
+    for (u8 i = 0; i < menu->label_count; i++)
     {
     	SGUI_Sprite_clear(&menu->labels[i]->sprite);
     	SM_String_clear(&menu->labels[i]->text);
     }
 
-    for (uint_fast8_t i = 0; i < menu->button_count; i++)
+    for (u8 i = 0; i < menu->button_count; i++)
     {
     	SGUI_Sprite_clear(&menu->buttons[i]->sprite);
     	SM_String_clear(&menu->buttons[i]->text);
     }
 
-    for (uint_fast8_t i = 0; i < menu->entry_count; i++)
+    for (u8 i = 0; i < menu->entry_count; i++)
     {
     	SGUI_Entry_clear_sprites(menu->entries[i]);
     	SM_String_clear(&menu->entries[i]->text);

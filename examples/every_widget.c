@@ -34,7 +34,7 @@ static const char LABEL_TEXT[] = "Label";
 static const char BUTTON0_TEXT[] = "i toggle";
 static const char BUTTON1_TEXT[] = "i am toggled";
 static const char ENTRY0_TEXT[] = "e0";
-static const char ENTRY1_TEXT[] = "e1";
+static const char ENTRY1_TEXT[] = "entry1 premade text and resized";
 
 static const int32_t MENU_X = 0;
 static const int32_t MENU_Y = 0;
@@ -60,8 +60,6 @@ static const int32_t ENTRY0_H = FONT_SIZE;
 
 static const int32_t ENTRY1_X = 10 + FONT_SIZE * 16 + 10;
 static const int32_t ENTRY1_Y = 70;
-static const int32_t ENTRY1_W = FONT_SIZE * 28;
-static const int32_t ENTRY1_H = FONT_SIZE;
 
 struct Button0Data
 {
@@ -174,18 +172,15 @@ int main( void )
 
 	label.rect.x = LABEL_X;
 	label.rect.y = LABEL_Y;
-	label.rect.w = label.sprite.surface->w;
-	label.rect.h = label.sprite.surface->h;
+	SGUI_Label_resize(&label);
 
 	button0.rect.x = BUTTON0_X;
 	button0.rect.y = BUTTON0_Y;
-	button0.rect.w = button0.sprite.surface->w;
-	button0.rect.h = button0.sprite.surface->h;
+	SGUI_Button_resize(&button0);
 
 	button1.rect.x = BUTTON1_X;
 	button1.rect.y = BUTTON1_Y;
-	button1.rect.w = button1.sprite.surface->w;
-	button1.rect.h = button1.sprite.surface->h;
+	SGUI_Button_resize(&button1);
 
 	entry0.rect.x = ENTRY0_X;
 	entry0.rect.y = ENTRY0_Y;
@@ -194,8 +189,7 @@ int main( void )
 
 	entry1.rect.x = ENTRY1_X;
 	entry1.rect.y = ENTRY1_Y;
-	entry1.rect.w = ENTRY1_W;
-	entry1.rect.h = ENTRY1_H;
+	SGUI_Entry_resize(&entry1);
 
 	// set widget event functions
 	button0_data.btn = &button1;

@@ -19,7 +19,7 @@
 #ifndef SGUI_SPRITE_H
 #define SGUI_SPRITE_H
 
-#include <stdint.h>
+#include <SM_types.h>
 #include <stdbool.h>
 #include <SDL.h>
 #include <SDL_ttf.h>

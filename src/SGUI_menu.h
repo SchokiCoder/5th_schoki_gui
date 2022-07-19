@@ -20,7 +20,7 @@
 #define SGUI_MENU_H
 
 #include <stdbool.h>
-#include <stdint.h>
+#include <SM_types.h>
 #include <SDL_render.h>
 #include <SDL_ttf.h>
 #include <SDL_pixels.h>
@@ -29,6 +29,20 @@ typedef struct SGUI_Theme SGUI_Theme;
 typedef struct SGUI_Label SGUI_Label;
 typedef struct SGUI_Button SGUI_Button;
 typedef struct SGUI_Entry SGUI_Entry;
+
+typedef enum SGUI_WidgetType
+{
+	WT_None,
+	WT_Label,
+	WT_Button,
+	WT_Entry,
+} SGUI_WidgetType ;
+
+typedef struct SGUI_WidgetId
+{
+	SGUI_WidgetType type;
+	u8 i;
+} SGUI_WidgetId ;
 
 #define SGUI_MENU_MAX_WIDGETS 16 /* per type */
 
@@ -44,13 +58,13 @@ typedef struct SGUI_Menu
 	bool visible;
 	bool active;
 
-	uint_fast8_t label_count;
+	u8 label_count;
 	SGUI_Label *labels[SGUI_MENU_MAX_WIDGETS];
 
-	uint_fast8_t button_count;
+	u8 button_count;
 	SGUI_Button *buttons[SGUI_MENU_MAX_WIDGETS];
 
-	uint_fast8_t entry_count;
+	u8 entry_count;
 	SGUI_Entry *entries[SGUI_MENU_MAX_WIDGETS];
 	SGUI_Entry *focused_entry;
 
@@ -63,6 +77,8 @@ SGUI_Menu SGUI_Menu_new( SDL_Renderer *renderer, const SGUI_MenuStyle style );
 void SGUI_Menu_draw( SGUI_Menu *menu );
 
 void SGUI_Menu_handle_event( SGUI_Menu *menu, SDL_Event *event );
+
+void SGUI_Menu_grid( SGUI_Menu *menu );
 
 void SGUI_Menu_clear( SGUI_Menu *menu );
 

@@ -85,3 +85,9 @@ void SGUI_Button_draw( SGUI_Button *button )
 		SDL_RenderFillRect(button->menu->renderer, &button->rect);
 	}
 }
+
+void SGUI_Button_resize( SGUI_Button *button )
+{
+	button->rect.w = button->sprite.surface->w;
+	button->rect.h = button->sprite.surface->h;
+}

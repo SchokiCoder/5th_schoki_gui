@@ -19,7 +19,7 @@
 #ifndef SGUI_LABEL_H
 #define SGUI_LABEL_H
 
-#include <stdint.h>
+#include <SM_types.h>
 #include <SM_string.h>
 #include "SGUI_sprite.h"
 
@@ -47,10 +47,16 @@ typedef struct SGUI_Label
 	SGUI_LabelStyle style;
 } SGUI_Label ;
 
-void SGUI_Label_new( SGUI_Label *label, SGUI_Menu *menu, TTF_Font *font, const SGUI_LabelStyle style );
+void SGUI_Label_new(
+	SGUI_Label *label,
+	SGUI_Menu *menu,
+	TTF_Font *font,
+	const SGUI_LabelStyle style );
 
 void SGUI_Label_update_sprite( SGUI_Label *label );
 
 void SGUI_Label_draw( SGUI_Label *label );
+
+void SGUI_Label_resize( SGUI_Label *label );
 
 #endif /* SGUI_LABEL_H */
