@@ -1,31 +1,34 @@
 /*
-	schoki_gui
-	Copyright (C) 2022	Andy Frank Schoknecht
-
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * schoki_gui
+ * Copyright (C) 2022  Andy Frank Schoknecht
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not see
+ * <https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html>.
+ */
 
 #include "SGUI_theme.h"
 #include "SGUI_menu.h"
 #include "SGUI_entry.h"
 
-void SGUI_Entry_new( SGUI_Entry *entry, SGUI_Menu *menu, TTF_Font *font, const SGUI_EntryStyle style )
+void SGUI_Entry_new(SGUI_Entry * entry, SGUI_Menu * menu, TTF_Font * font,
+		    const SGUI_EntryStyle style)
 {
 	entry->menu = menu;
 	entry->font = font;
 
-	entry->sprites = malloc(SGUI_ENTRY_TEXT_INIT_SIZE * sizeof(SGUI_Sprite));
+	entry->sprites =
+	    malloc(SGUI_ENTRY_TEXT_INIT_SIZE * sizeof(SGUI_Sprite));
 
 	for (size_t i = 0; i < SGUI_ENTRY_TEXT_INIT_SIZE; i++)
 		entry->sprites[i] = SGUI_Sprite_new();
@@ -39,7 +42,7 @@ void SGUI_Entry_new( SGUI_Entry *entry, SGUI_Menu *menu, TTF_Font *font, const S
 	menu->entry_count++;
 }
 
-void SGUI_Entry_update_sprite( SGUI_Entry *entry, size_t pos )
+void SGUI_Entry_update_sprite(SGUI_Entry * entry, size_t pos)
 {
 	// stop if sprite doesn't exist
 	if (pos > (entry->text.len - 1))
@@ -54,22 +57,20 @@ void SGUI_Entry_update_sprite( SGUI_Entry *entry, size_t pos )
 	SGUI_Sprite_clear(&entry->sprites[pos]);
 
 	// generate sprite of that letter
-	entry->sprites[pos] = SGUI_Sprite_from_text(
-		entry->menu->renderer,
-		letter,
-		entry->font,
-		entry->style.font_color);
+	entry->sprites[pos] = SGUI_Sprite_from_text(entry->menu->renderer,
+						    letter,
+						    entry->font,
+						    entry->style.font_color);
 }
 
-void SGUI_Entry_update_sprites( SGUI_Entry *entry )
+void SGUI_Entry_update_sprites(SGUI_Entry * entry)
 {
-	for (size_t i = 0; i < entry->text.len; i++)
-	{
+	for (size_t i = 0; i < entry->text.len; i++) {
 		SGUI_Entry_update_sprite(entry, i);
 	}
 }
 
-void SGUI_Entry_append( SGUI_Entry *entry, SM_String *appendage )
+void SGUI_Entry_append(SGUI_Entry * entry, SM_String * appendage)
 {
 	size_t old_size = entry->text.size;
 
@@ -77,45 +78,42 @@ void SGUI_Entry_append( SGUI_Entry *entry, SM_String *appendage )
 	SM_String_append(&entry->text, appendage);
 
 	// increase sprite array size
-	if (entry->text.size > old_size)
-	{
-		entry->sprites = realloc(entry->sprites, old_size * 2 * sizeof(SGUI_Sprite));
+	if (entry->text.size > old_size) {
+		entry->sprites =
+		    realloc(entry->sprites, old_size * 2 * sizeof(SGUI_Sprite));
 
 		for (size_t i = old_size; i < entry->text.size; i++)
-            entry->sprites[i] = SGUI_Sprite_new();
+			entry->sprites[i] = SGUI_Sprite_new();
 	}
-
 	// update new sprites
-	for (size_t i = entry->text.len - appendage->len; i < entry->text.len; i++)
-    	SGUI_Entry_update_sprite(entry, i);
+	for (size_t i = entry->text.len - appendage->len; i < entry->text.len;
+	     i++)
+		SGUI_Entry_update_sprite(entry, i);
 }
 
-void SGUI_Entry_draw( SGUI_Entry *entry )
+void SGUI_Entry_draw(SGUI_Entry * entry)
 {
 	SDL_Rect draw_target;
-    u32 text_width = 0;
+	u32 text_width = 0;
 
 	// draw bg
-	SDL_SetRenderDrawColor(
-		entry->menu->renderer,
-		entry->style.bg_color.r,
-		entry->style.bg_color.g,
-		entry->style.bg_color.b,
-		entry->style.bg_color.a);
+	SDL_SetRenderDrawColor(entry->menu->renderer,
+			       entry->style.bg_color.r,
+			       entry->style.bg_color.g,
+			       entry->style.bg_color.b,
+			       entry->style.bg_color.a);
 	SDL_RenderFillRect(entry->menu->renderer, &entry->rect);
 
 	// draw border
-	SDL_SetRenderDrawColor(
-		entry->menu->renderer,
-		entry->style.border_color.r,
-		entry->style.border_color.g,
-		entry->style.border_color.b,
-		entry->style.border_color.a);
+	SDL_SetRenderDrawColor(entry->menu->renderer,
+			       entry->style.border_color.r,
+			       entry->style.border_color.g,
+			       entry->style.border_color.b,
+			       entry->style.border_color.a);
 	SDL_RenderDrawRect(entry->menu->renderer, &entry->rect);
 
 	// draw text
-	for (size_t i = 0; i < entry->text.len; i++)
-	{
+	for (size_t i = 0; i < entry->text.len; i++) {
 		// if text exceeds entry width, stop
 		if (text_width > (u32) entry->rect.w)
 			break;
@@ -126,45 +124,38 @@ void SGUI_Entry_draw( SGUI_Entry *entry )
 		draw_target.w = entry->sprites[i].surface->w;
 		draw_target.h = entry->sprites[i].surface->h;
 
-		SDL_RenderCopy(
-			entry->menu->renderer,
-			entry->sprites[i].texture,
-			NULL,
-			&draw_target);
+		SDL_RenderCopy(entry->menu->renderer,
+			       entry->sprites[i].texture, NULL, &draw_target);
 
 		text_width += draw_target.w;
 	}
 
 	// if disabled, draw disabled shade
-	if (entry->active == false)
-	{
-		SDL_SetRenderDrawColor(
-			entry->menu->renderer,
-			entry->style.disabled_color.r,
-			entry->style.disabled_color.g,
-			entry->style.disabled_color.b,
-			entry->style.disabled_color.a);
+	if (entry->active == false) {
+		SDL_SetRenderDrawColor(entry->menu->renderer,
+				       entry->style.disabled_color.r,
+				       entry->style.disabled_color.g,
+				       entry->style.disabled_color.b,
+				       entry->style.disabled_color.a);
 		SDL_RenderFillRect(entry->menu->renderer, &entry->rect);
 	}
 }
 
-void SGUI_Entry_clear_sprites( SGUI_Entry *entry )
+void SGUI_Entry_clear_sprites(SGUI_Entry * entry)
 {
-	for (size_t i = 0; i < entry->text.len; i++)
-	{
+	for (size_t i = 0; i < entry->text.len; i++) {
 		SGUI_Sprite_clear(&entry->sprites[i]);
 	}
 
 	free(entry->sprites);
 }
 
-void SGUI_Entry_resize( SGUI_Entry *entry )
+void SGUI_Entry_resize(SGUI_Entry * entry)
 {
 	entry->rect.h = entry->sprites[0].surface->h;
 	entry->rect.w = 0;
 
-	for (usize i = 0; i < entry->text.len; i++)
-	{
+	for (usize i = 0; i < entry->text.len; i++) {
 		entry->rect.w += entry->sprites[i].surface->w;
 	}
 }

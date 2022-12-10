@@ -1,20 +1,21 @@
 /*
-	schoki_gui
-	Copyright (C) 2022	Andy Frank Schoknecht
-
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * schoki_gui
+ * Copyright (C) 2022  Andy Frank Schoknecht
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not see
+ * <https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html>.
+ */
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -26,7 +27,8 @@
 #include "SGUI_sprite.h"
 
 static const SGUI_Theme *TEST_THEME = &SGUI_THEME_DARK;
-static const char PATH_FONT[] = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
+static const char PATH_FONT[] =
+    "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
 static const uint32_t FONT_SIZE = 12;
 
 static const char SPRITE_TEXT[] = "Sprite";
@@ -61,15 +63,14 @@ static const int32_t ENTRY0_H = FONT_SIZE;
 static const int32_t ENTRY1_X = 10 + FONT_SIZE * 16 + 10;
 static const int32_t ENTRY1_Y = 70;
 
-struct Button0Data
-{
+struct Button0Data {
 	SGUI_Button *btn;
 	SGUI_Entry *txt;
 };
 
 void button0_click(void *data)
 {
-	struct Button0Data *parsed_data = (struct Button0Data*) data;
+	struct Button0Data *parsed_data = (struct Button0Data *)data;
 
 	parsed_data->btn->active = !parsed_data->btn->active;
 	parsed_data->txt->active = !parsed_data->txt->active;
@@ -80,7 +81,7 @@ void button1_click()
 	printf("yaaay\n");
 }
 
-int main( void )
+int main(void)
 {
 	bool active = true;
 	SDL_Renderer *renderer;
@@ -89,7 +90,7 @@ int main( void )
 	SDL_Event event;
 
 	SGUI_Menu menu;
-	SGUI_Sprite sprite = {.invalid = false};
+	SGUI_Sprite sprite = {.invalid = false };
 	SDL_Rect rect_sprite;
 	SGUI_Label label;
 	SGUI_Button button0;
@@ -99,45 +100,40 @@ int main( void )
 	struct Button0Data button0_data;
 
 	// init SDL
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
-    {
-    	printf("SDL could not initialize.");
-    	return 1;
-    }
-
-    // init ttf
-	if (TTF_Init() != 0)
-	{
-		printf("TTF could not initialize.");
-    	return 1;
+	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+		printf("SDL could not initialize.");
+		return 1;
 	}
-
+	// init ttf
+	if (TTF_Init() != 0) {
+		printf("TTF could not initialize.");
+		return 1;
+	}
 	// create window and renderer
-    window = SDL_CreateWindow(
-    	"test",
-    	SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-    	MENU_W, MENU_H,
-    	SDL_WINDOW_SHOWN);
-    renderer = SDL_CreateRenderer(window, -1, 0);
+	window = SDL_CreateWindow("test",
+				  SDL_WINDOWPOS_CENTERED,
+				  SDL_WINDOWPOS_CENTERED, MENU_W, MENU_H,
+				  SDL_WINDOW_SHOWN);
+	renderer = SDL_CreateRenderer(window, -1, 0);
 
-    //sdl enable alpha blending
-    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+	//sdl enable alpha blending
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-    // load font
+	// load font
 	font = TTF_OpenFont(PATH_FONT, FONT_SIZE);
 
-	if (font == NULL)
-	{
+	if (font == NULL) {
 		printf("Font not found.\n");
 		return 1;
 	}
-
 	// make standalone sprite
-	sprite = SGUI_Sprite_from_text(renderer, SPRITE_TEXT, font, SGUI_THEME_DARK.label.font_color);
+	sprite =
+	    SGUI_Sprite_from_text(renderer, SPRITE_TEXT, font,
+				  SGUI_THEME_DARK.label.font_color);
 
 	rect_sprite.x = SPRITE_X;
-    rect_sprite.y = SPRITE_Y;
-    rect_sprite.w = sprite.surface->w;
+	rect_sprite.y = SPRITE_Y;
+	rect_sprite.w = sprite.surface->w;
 	rect_sprite.h = sprite.surface->h;
 
 	// make menu
@@ -201,47 +197,40 @@ int main( void )
 	button1.func_click = button1_click;
 
 	// mainloop
-    while (active)
-    {
-    	// handle events
-		while (SDL_PollEvent(&event))
-		{
+	while (active) {
+		// handle events
+		while (SDL_PollEvent(&event)) {
 			// menu events
 			SGUI_Menu_handle_event(&menu, &event);
 
 			// app events
-			switch (event.type)
-			{
-			// window close
+			switch (event.type) {
+				// window close
 			case SDL_QUIT:
 				active = false;
-                break;
+				break;
 			}
 		}
 
-    	// draw sprite
-    	SDL_RenderCopy(
-			renderer,
-			sprite.texture,
-			NULL,
-			&rect_sprite);
+		// draw sprite
+		SDL_RenderCopy(renderer, sprite.texture, NULL, &rect_sprite);
 
 		// draw menu
 		SGUI_Menu_draw(&menu);
 
 		// show drawn image
 		SDL_RenderPresent(renderer);
-    }
+	}
 
-    // quit SDL
-    SDL_Quit();
+	// quit SDL
+	SDL_Quit();
 
-    // quit TTF
-    TTF_Quit();
+	// quit TTF
+	TTF_Quit();
 
-    // clear sprites
-    SGUI_Sprite_clear(&sprite);
-    SGUI_Menu_clear(&menu);
+	// clear sprites
+	SGUI_Sprite_clear(&sprite);
+	SGUI_Menu_clear(&menu);
 
 	return 0;
 }
