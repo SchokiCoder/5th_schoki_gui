@@ -17,6 +17,7 @@
  * <https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html>.
  */
 
+#include <SDL_image.h>
 #include <SDL_ttf.h>
 #include "SGUI_sprite.h"
 
@@ -47,7 +48,6 @@ SGUI_Sprite SGUI_Sprite_from_file(SDL_Renderer * renderer, const char *filepath)
 {
 	SGUI_Sprite result = {.invalid = false };
 
-	// load image, create texture
 	result.surface = IMG_Load(filepath);
 	SGUI_Sprite_create_texture(&result, renderer);
 
