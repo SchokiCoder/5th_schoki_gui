@@ -1,0 +1,5 @@
+*.o
+*.so
+every_widget
+grid
+multiple_menus

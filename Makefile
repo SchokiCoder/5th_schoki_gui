@@ -1,8 +1,10 @@
 CC=cc
-CFLAGS=-std=c99 -Wall -Wextra -O3
+CFLAGS=-std=c99 -Wall -Wextra -g
 INCLUDE=-I /usr/include/SDL2 -I /usr/include/schoki_misc
 LIB_NAME=schoki_gui
 SO_NAME=lib$(LIB_NAME).so
+
+.PHONY: all clean examples install uninstall
 
 all: $(SO_NAME) install
 
@@ -24,7 +26,7 @@ SGUI_sprite.o:
 $(SO_NAME): SGUI_menu.o SGUI_label.o SGUI_button.o SGUI_entry.o SGUI_sprite.o
 	$(CC) -shared -o $@ $^
 
-install:
+install: $(SO_NAME)
 	cp $(SO_NAME) /usr/lib
 	chmod 0755 /usr/lib/$(SO_NAME)
 	mkdir /usr/include/$(LIB_NAME)
@@ -45,7 +47,9 @@ uninstall:
 
 EXFLAGS=-std=c99 -Wall -Wextra -g
 EXLIBS=-l schoki_misc -l SDL2 -l SDL2_ttf -l $(LIB_NAME)
-EXINCLUDE=$(INCLUDE) -I /usr/include/$(LIB_NAME)
+EXINCLUDE=$(INCLUDE) -I ./src -L .
+
+examples: every_widget multiple_menus grid
 
 every_widget:
 	$(CC) examples/$@.c -o $@ $(EXFLAGS) $(EXLIBS) $(EXINCLUDE)
@@ -55,5 +59,3 @@ multiple_menus:
 
 grid:
 	$(CC) examples/$@.c -o $@ $(EXFLAGS) $(EXLIBS) $(EXINCLUDE)
-
-examples: every_widget multiple_menus grid

@@ -48,7 +48,7 @@ SGUI_Sprite SGUI_Sprite_from_file(SDL_Renderer * renderer, const char *filepath)
 	SGUI_Sprite result = {.invalid = false };
 
 	// load image, create texture
-	result.surface = SDL_LoadBMP(filepath);
+	result.surface = IMG_Load(filepath);
 	SGUI_Sprite_create_texture(&result, renderer);
 
 	return result;
